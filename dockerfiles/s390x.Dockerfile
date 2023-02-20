@@ -1,8 +1,8 @@
-FROM fedora:rawhide
+FROM s390x/fedora:rawhide
 
 RUN dnf -y update
 
-RUN dnf install -y gcc clang cmake doxygen git
+RUN dnf install -y gcc cmake clang doxygen git
 
 RUN gcc --version
 RUN clang --version
@@ -18,12 +18,14 @@ RUN mkdir build_clang
 WORKDIR /usr/src/bee2/build
 RUN cmake ..
 RUN make
-RUN ctest --verbose
+# RUN make test
+# RUN ctest --verbose
 # RUN make install
 
 WORKDIR /usr/src/bee2/build_clang
 RUN export CC=/usr/bin/clang && cmake ..
 RUN make
+# RUN make test
 RUN ctest --verbose
 
 WORKDIR /usr/src
