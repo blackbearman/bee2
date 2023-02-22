@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  s390x:
+    image: s390x_fedora
+    build: 
+      context: .
+      dockerfile: dockerfiles/s390x.Dockerfile
+    volumes:
+      - .:/usr/src
+
+  s390x_test:
+    image: s390x_fedora
+    command: bash "scripts/run_tests.sh"
+    volumes:
+      - .:/usr/src
