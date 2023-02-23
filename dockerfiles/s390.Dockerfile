@@ -5,20 +5,10 @@
 
 FROM s390x/debian:latest
 
-RUN apt-get update && apt-get install -y cmake git
+RUN apt-get update && apt-get install -y cmake git gcc clang
 
 RUN gcc --version
+RUN clang --version
 RUN cat /etc/os-release
-
-WORKDIR /usr/src
-RUN git clone https://github.com/agievich/bee2.git
-
-RUN mkdir bee2/build
-WORKDIR /usr/src/bee2/build
-RUN cmake -DCMAKE_BUILD_TYPE="Release" -DBUILD_FAST="ON" ..
-RUN make
-RUN make test
-RUN make install
-RUN gcc --version
 
 WORKDIR /usr/src
