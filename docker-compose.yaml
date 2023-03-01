@@ -1,6 +1,18 @@
 version: '3'
 
 services:
+  fedora:
+    image: bee2:fedora
+    build: 
+      context: .
+      dockerfile: dockerfiles/rawhide.Dockerfile
+      x-bake:
+        platforms:
+          - linux/amd64
+          - linux/s390x
+    volumes:
+      - .:/usr/src
+
   s390x:
     image: s390x_fedora
     build: 

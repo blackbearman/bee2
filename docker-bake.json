@@ -1,0 +1,49 @@
+{
+  "group": {
+    "default": {
+      "targets": [
+        "fedora",
+        "debian"
+      ]
+    }
+  },
+  "target": {
+    "fedora": {
+      "context": ".",
+      "dockerfile": "dockerfiles/rawhide.Dockerfile",
+      "tags": [
+        "fedora:dev"
+      ],
+      "platforms": [
+        "linux/amd64",
+        "linux/s390x"
+      ]
+    },
+    "debian": {
+      "context": ".",
+      "dockerfile": "dockerfiles/debian.Dockerfile",
+      "tags": [
+        "debian:dev"
+      ],
+      "platforms": [
+        "linux/amd64"
+      ],
+      "output": [
+        "type=image"
+      ]
+    },
+    "bee2d": {
+      "context": ".",
+      "dockerfile": "dockerfiles/bee2d.Dockerfile",
+      "tags": [
+        "bee2:debian"
+      ],
+      "platforms": [
+        "linux/amd64"
+      ],
+      "output": [
+        "type=image"
+      ]
+    }
+  }
+}

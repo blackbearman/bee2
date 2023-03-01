@@ -5,7 +5,7 @@
 
 FROM s390x/debian:latest
 
-RUN apt-get update && apt-get install -y cmake git gcc clang
+RUN apt-get update && apt-get install -y cmake git gcc doxygen clang
 
 RUN gcc --version
 RUN clang --version

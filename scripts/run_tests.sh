@@ -8,7 +8,7 @@ mkdir build_gcc
 mkdir build_clang
 
 cd build_gcc
-cmake ..
+cmake -DCMAKE_BUILD_TYPE="Release" -DBUILD_FAST="ON" ..
 make
 
 ctest --verbose
