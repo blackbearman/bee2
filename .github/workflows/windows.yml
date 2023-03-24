@@ -1,12 +1,12 @@
-# Build and run tests on the baseline platform
+# Build and run tests on the Windows x64 platform
 
-name: build
+name: windows
 
 on:
   push:
-    branches: [ "master", "actions" ]
+    branches: [ "arch", "actions" ]
   pull_request:
-    branches: [ "master", "actions" ]
+    branches: [ "arch", "actions" ]
 
 jobs:
   build:
