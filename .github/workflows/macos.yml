@@ -26,8 +26,10 @@ jobs:
 
     - name: Install dependencies on macos
       run: |
-        brew install cmake gcc clang 
+        brew install cmake gcc 
         cmake --version
+        gcc --version
+        clang --version
 
     - name: Configure CMake
       run: CC=${{matrix.CC}} cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DBUILD_FAST=${{matrix.BUILD_FAST}} -DBASH_PLATFORM=${{matrix.BASH_PLATFORM}} 
