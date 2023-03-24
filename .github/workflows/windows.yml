@@ -18,7 +18,6 @@ jobs:
         - BUILD_TYPE: Release
           BUILD_FAST: OFF
           BASH_PLATFORM: BASH_64
-          CC: gcc
 
     steps:
     - name: Get source
