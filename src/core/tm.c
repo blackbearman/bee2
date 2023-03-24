@@ -185,7 +185,7 @@ tm_time_t tmTimeRound(tm_time_t t0, tm_time_t ts)
 *******************************************************************************
 */
 
-#if defined(_MSC_VER)
+#if defined(OS_WINDOWS)
 #define localtime_r(et, lt) (localtime_s(lt, et) ? 0 : lt)
 #endif
 
