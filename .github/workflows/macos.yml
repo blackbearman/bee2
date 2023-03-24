@@ -19,6 +19,10 @@ jobs:
           BUILD_FAST: OFF
           BASH_PLATFORM: BASH_64
           CC: gcc
+        - BUILD_TYPE: Release
+          BUILD_FAST: OFF
+          BASH_PLATFORM: BASH_64
+          CC: clang
 
     steps:
     - name: Get source
