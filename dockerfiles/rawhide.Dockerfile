@@ -1,4 +1,4 @@
-FROM fedora:rawhide
+FROM --platform=$TARGETPLATFORM fedora:rawhide
 
 RUN dnf -y update
 
