@@ -37,8 +37,10 @@ services:
     volumes:
       - .:/usr/src
 
-  fedora_test:
-    image: bee2:fedora
-    command: bash "scripts/run_tests.sh"
+  debian:
+    image: bee2:debian
+    build: 
+      context: .
+      dockerfile: dockerfiles/rawhide.Dockerfile
     volumes:
-      - .:/usr/src
+      - .:/usr/src  
