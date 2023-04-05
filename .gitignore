@@ -61,9 +61,8 @@
 *.nb
 
 # Specific files
-_docs
-backup
+.aux
+.tools
 build
-support
 clear.cmd
 build_*
