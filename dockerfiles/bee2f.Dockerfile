@@ -1,4 +1,4 @@
-FROM --platform=$TARGETPLATFORM btls/debian:cdev
+FROM --platform=$TARGETPLATFORM btls/fedora:cdev
 
 COPY . /usr/src
 
