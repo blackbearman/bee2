@@ -68,7 +68,7 @@ endif()
 # * https://clang.llvm.org/docs/DiagnosticsReference.html
 
 set(CMAKE_C_WARNINGS "-Wall -Wextra -W -Wdeclaration-after-statement \
-  -Wwrite-strings -Wno-parentheses -Wno-unused-parameter -Wno-strict-aliasing \
+  -Wwrite-strings -Wno-parentheses -Wno-unused-parameter \
   -Wno-xor-used-as-pow")
 
 if(CMAKE_COMPILER_IS_GNUCC)
@@ -83,7 +83,7 @@ if(CMAKE_COMPILER_IS_GNUCC)
   elseif(BASH_NEON)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
   endif()
-  set(CMAKE_C_FLAGS_RELEASE    "-O2 -fno-strict-aliasing")
+  set(CMAKE_C_FLAGS_RELEASE    "-O2")
   set(CMAKE_C_FLAGS_DEBUG      "-O0 -g3")
   set(CMAKE_C_FLAGS_COVERAGE   "-O0 -g3 -coverage")
   set(CMAKE_C_FLAGS_ASAN       "-fsanitize=address -fno-common \
