@@ -72,7 +72,7 @@ set(CMAKE_C_WARNINGS "-Wall -Wextra -W -Wdeclaration-after-statement \
   -Wno-xor-used-as-pow")
 
 if(CMAKE_COMPILER_IS_GNUCC)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CMAKE_C_WARNINGS} -Wlogical-op")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CMAKE_C_WARNINGS} -Wlogical-op -fsanitize=alignment")
   if(BASH_SSE2)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2")
   elseif(BASH_AVX2)

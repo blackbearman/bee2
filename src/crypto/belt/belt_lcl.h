@@ -78,14 +78,23 @@ typedef union _block block_t;
             _x |= (((block_t*)(block))->w[_i] == 0);\
         _x;\
     }) 
-
+/*
 #define beltBlockXor2(dest, src)\
     for(int _i = 0; _i < W_OF_B(128); _i++) \
 	    ((block_t*)(dest))->w[_i] ^= ((const block_t*)(src))->w[_i];
+*/
+#define beltBlockXor2(dest, src)\
+    for(int _i = 0; _i < 16; _i++) \
+	    ((block_t*)(dest))->b1[_i] ^= ((const octet*)(src))[_i];
 
+/*
 #define beltBlockCopy(dest, src)\
     for(int _i = 0; _i < W_OF_B(128); _i++) \
 	    ((block_t*)(dest))->w[_i] = ((const block_t*)(src))->w[_i];
+*/
+
+#define beltBlockCopy(dest, src)\
+    memCopy(dest, src, 16);
 
 #define beltBlockRevU32(block)\
 	((u32*)(block))[0] = u32Rev(((u32*)(block))[0]),\
