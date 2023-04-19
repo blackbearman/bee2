@@ -11,3 +11,14 @@
 */
 
 #include "bee2/core/word.h"
+#include<string.h>
+
+word wordLoad(const void* buf)
+{
+	word w;
+	memcpy(&w, buf, O_PER_W);
+#if (OCTET_ORDER == BIG_ENDIAN)
+	w = wordRev(w);
+#endif // OCTET_ORDER	
+	return w;
+}

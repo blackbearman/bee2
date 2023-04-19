@@ -164,7 +164,7 @@ bool_t SAFE(memEq)(const void* buf1, const void* buf2, size_t count)
 	ASSERT(memIsValid(buf2, count));
 	for (; count >= O_PER_W; count -= O_PER_W)
 	{
-		diff |= *(const word*)buf1 ^ *(const word*)buf2;
+		diff |= wordLoad(buf1) ^ wordLoad(buf2);
 		buf1 = (const word*)buf1 + 1;
 		buf2 = (const word*)buf2 + 1;
 	}
@@ -251,8 +251,8 @@ int SAFE(memCmpRev)(const void* buf1, const void* buf2, size_t count)
 	count /= O_PER_W;
 	while (count--)
 	{
-		w1 = ((const word*)buf1)[count];
-		w2 = ((const word*)buf2)[count];
+		w1 = wordLoad(buf1 + count * O_PER_W);
+		w2 = wordLoad(buf2 + count * O_PER_W);
 #if (OCTET_ORDER == BIG_ENDIAN)
 		w1 = wordRev(w1);
 		w2 = wordRev(w2);
@@ -300,7 +300,7 @@ bool_t SAFE(memIsZero)(const void* buf, size_t count)
 	ASSERT(memIsValid(buf, count));
 	for (; count >= O_PER_W; count -= O_PER_W)
 	{
-		diff |= *(const word*)buf;
+		diff |= wordLoad(buf);
 		buf = (const word*)buf + 1;
 	}
 	while (count--)
@@ -482,7 +482,8 @@ void memXor2(void* dest, const void* src, size_t count)
 	ASSERT(memIsSameOrDisjoint(src, dest, count));
 	for (; count >= O_PER_W; count -= O_PER_W)
 	{
-		*(word*)dest ^= *(const word*)src;
+		word w = wordLoad(dest) ^ wordLoad(src);
+		memcpy(dest, &w, O_PER_W);
 		src = (const word*)src + 1;
 		dest = (word*)dest + 1;
 	}

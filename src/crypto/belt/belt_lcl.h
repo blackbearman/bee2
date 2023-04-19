@@ -85,7 +85,7 @@ typedef union _block block_t;
 */
 #define beltBlockXor2(dest, src)\
     for(int _i = 0; _i < 16; _i++) \
-	    ((block_t*)(dest))->b1[_i] ^= ((const octet*)(src))[_i];
+	    ((octet*)(dest))[_i] ^= ((const octet*)(src))[_i];
 
 /*
 #define beltBlockCopy(dest, src)\

@@ -199,6 +199,17 @@ extern "C" {
 #define wordGreater0M(a, b) ((word)(wordLeq01(a, b) - WORD_1))
 #define wordGeq0M(a, b) ((word)(wordLess01(a, b) - WORD_1))
 
+/*!	\brief Загрузка октетов в машинное слово
+
+	Выполняется безопасная загрузка машинного слова из невыровненной памяти buf.
+	\return Машинное слово
+*/
+word wordLoad(
+	const void* buf		/*!< [in] буфер памяти */
+);
+
+#define wordLoadI(a, i) ((wordLoad(a + i * B_PER_W))
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
