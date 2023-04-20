@@ -48,8 +48,6 @@ extern "C" {
 */
 
 union _block{
-    u64 b8[2];
-    u32 b4[4];
     octet b1[16];
     word w[W_OF_B(128)];
 };
