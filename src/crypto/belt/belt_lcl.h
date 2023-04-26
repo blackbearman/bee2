@@ -49,6 +49,11 @@ extern "C" {
 
 union _block{
     octet b1[16];
+#if (B_PER_W == 32)
+    u16 b2[8];
+#elif (B_PER_W == 64)
+    u32 b4[4];
+#endif
     word w[W_OF_B(128)];
 };
 typedef union _block block_t;
