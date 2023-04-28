@@ -208,7 +208,7 @@ word wordLoad(
 	const void* buf		/*!< [in] буфер памяти */
 );
 
-#define wordLoadI(a, i) ((wordLoad(a + i * B_PER_W))
+#define wordLoadI(a, i) (wordLoad(a + i * O_PER_W))
 
 #ifdef __cplusplus
 } /* extern "C" */

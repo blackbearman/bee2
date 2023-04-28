@@ -76,19 +76,19 @@ typedef union _block block_t;
 
 #define beltHalfBlockIsZero(block)\
     ({ \
-        int _x = 0; \
+        int _x = 1; \
         for(int _i = 0; _i < W_OF_B(128)/2; _i++) \
-            _x |= (((block_t*)(block))->w[_i] == 0);\
+            _x &= (((block_t*)(block))->w[_i] == 0);\
         _x;\
     }) 
-/*
 #define beltBlockXor2(dest, src)\
     for(int _i = 0; _i < W_OF_B(128); _i++) \
 	    ((block_t*)(dest))->w[_i] ^= ((const block_t*)(src))->w[_i];
-*/
+/*
 #define beltBlockXor2(dest, src)\
     for(int _i = 0; _i < 16; _i++) \
 	    ((octet*)(dest))[_i] ^= ((const octet*)(src))[_i];
+*/
 
 /*
 #define beltBlockCopy(dest, src)\
