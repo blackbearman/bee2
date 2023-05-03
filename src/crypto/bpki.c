@@ -310,6 +310,7 @@ err_t bpkiPrivkeyWrap(octet epki[], size_t* epki_len, const octet privkey[],
 {
 	size_t pki_len, edata_len, count;
 	octet* key;
+	octet* data;
 	err_t code;
 	// проверить входные данные
 	if (iter < 10000)
@@ -344,13 +345,16 @@ err_t bpkiPrivkeyWrap(octet epki[], size_t* epki_len, const octet privkey[],
 		return ERR_OUTOFMEMORY;
 	code = beltPBKDF2(key, pwd, pwd_len, iter, salt, 8);
 	ERR_CALL_HANDLE(code, blobClose(key));
+	data = (octet*)blobCreate(pki_len + 16);
 	// кодировать pki
-	pki_len = bpkiPrivkeyEnc(epki + count - pki_len, privkey, privkey_len);
+	pki_len = bpkiPrivkeyEnc(data + 16, privkey, privkey_len);
 	code = pki_len != SIZE_MAX ? ERR_OK : ERR_BAD_PRIVKEY;
-	ERR_CALL_HANDLE(code, (memWipe(epki, count), blobClose(key)));
+	ERR_CALL_HANDLE(code, (memWipe(epki, count), memWipe(data, pki_len + 16), 
+		blobClose(key), blobClose(data)));
 	// зашифровать pki
-	code = beltKWPWrap(epki + count - pki_len - 16,
-		epki + count - pki_len,	pki_len, 0, key, 32);
+	code = beltKWPWrap(data, data + 16,	pki_len, 0, key, 32);
+	memCopy(epki + count - pki_len - 16, data, pki_len + 16);
+	blobClose(data);
 	ERR_CALL_HANDLE(code, (memWipe(epki, count), blobClose(key)));
 	// кодировать edata и epki
 	count = bpkiEdataEnc(epki, epki + count - edata_len, edata_len,
@@ -424,6 +428,7 @@ err_t bpkiShareWrap(octet epki[], size_t* epki_len, const octet share[],
 {
 	size_t pki_len, edata_len, count;
 	octet* key;
+	octet* data;
 	err_t code;
 	// проверить входные данные
 	if (iter < 10000)
@@ -459,13 +464,16 @@ err_t bpkiShareWrap(octet epki[], size_t* epki_len, const octet share[],
 		return ERR_OUTOFMEMORY;
 	code = beltPBKDF2(key, pwd, pwd_len, iter, salt, 8);
 	ERR_CALL_HANDLE(code, blobClose(key));
+	data = (octet*)blobCreate(pki_len + 16);
 	// кодировать pki
-	pki_len = bpkiShareEnc(epki + count - pki_len, share, share_len);
+	pki_len = bpkiShareEnc(data + 16, share, share_len);
 	code = pki_len != SIZE_MAX ? ERR_OK : ERR_BAD_PRIVKEY;
-	ERR_CALL_HANDLE(code, (memWipe(epki, count), blobClose(key)));
+	ERR_CALL_HANDLE(code, (memWipe(epki, count), memWipe(data, pki_len + 16), 
+		blobClose(key), blobClose(data)));
 	// зашифровать pki
-	code = beltKWPWrap(epki + count - pki_len - 16,
-		epki + count - pki_len, pki_len, 0, key, 32);
+	code = beltKWPWrap(data, data + 16, pki_len, 0, key, 32);
+	memCopy(epki + count - pki_len - 16, data, pki_len + 16);
+	blobClose(data);
 	ERR_CALL_HANDLE(code, (memWipe(epki, count), blobClose(key)));
 	// кодировать edata и epki
 	count = bpkiEdataEnc(epki, epki + count - edata_len, edata_len,
