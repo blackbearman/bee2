@@ -132,7 +132,7 @@ len(CDF*) < 256. Форма кодирования len(CDF*) повышаетс�
 
 #define apduCmdSizeof(cmd) (sizeof(apdu_cmd_t) + (cmd)->cdf_len)
 
-void isolateOperation(octet* dest, octet* src, int len, void (*func_ptr)(void*, int, void*), void* state) {
+void isolateOperation(octet* dest, octet* src, size_t len, void (*func_ptr)(void*, size_t, void*), void* state) {
 	octet* data = blobCreate(len);
 	memMove(data, src, len);
 	func_ptr(data, len, state);

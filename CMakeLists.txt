@@ -24,7 +24,7 @@ else()
   set(CMAKE_BUILD_TYPE Release
       CACHE STRING 
       "Choose the type of build: \
-        Release Debug Coverage ASan ASanDbg MemSan MemSanDbg  AlignSan Check"
+        Release Debug Coverage ASan ASanDbg MemSan MemSanDbg AlignSan Check"
       FORCE)
 endif()
 
