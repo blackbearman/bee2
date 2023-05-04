@@ -132,6 +132,14 @@ len(CDF*) < 256. Форма кодирования len(CDF*) повышаетс�
 
 #define apduCmdSizeof(cmd) (sizeof(apdu_cmd_t) + (cmd)->cdf_len)
 
+void isolateOperation(octet* dest, octet* src, int len, void (*func_ptr)(void*, int, void*), void* state) {
+	octet* data = blobCreate(len);
+	memMove(data, src, len);
+	func_ptr(data, len, state);
+	memMove(dest, data, len);
+	blobClose(data);
+}
+
 err_t btokSMCmdWrap(octet apdu[], size_t* count, const apdu_cmd_t* cmd,
 	void* state)
 {
@@ -216,19 +224,20 @@ err_t btokSMCmdWrap(octet apdu[], size_t* count, const apdu_cmd_t* cmd,
 	{
 		c = derTLEnc(0, 0x87, cmd->cdf_len + 1);
 		ASSERT(c != SIZE_MAX);
-		// подготовить значение
-		memMove(apdu + offset + c + 1,
-			apdu + 4 + apduCmdCDFLenLen(cmd), cmd->cdf_len);
-		apdu[offset + c] = 0x02;
+		// зашифровать
+		beltCFBStart(st->stack, st->key2, 32, st->ctr);
+		//beltCFBStepE(apdu + offset, cmd->cdf_len, st->stack);
+		isolateOperation(
+			apdu + offset + c + 1, apdu + 4 + apduCmdCDFLenLen(cmd), cmd->cdf_len, 
+			beltCFBStepE, st->stack
+		);
 		// кодировать TL
 		c = derTLEnc(apdu + offset, 0x87, cmd->cdf_len + 1);
 		ASSERT(c != SIZE_MAX);
-		offset += c + 1;
-		// зашифровать
-		beltCFBStart(st->stack, st->key2, 32, st->ctr);
-		beltCFBStepE(apdu + offset, cmd->cdf_len, st->stack);
+		// подготовить значение
+		apdu[offset + c] = 0x02;
 		// дальше
-		offset += cmd->cdf_len;
+		offset += c + 1 + cmd->cdf_len;
 	}
 	// теперь можно перекодировать Lc
 	ASSERT(cdf_len_len == 1 || cdf_len_len == 3);
@@ -537,16 +546,16 @@ err_t btokSMRespWrap(octet apdu[], size_t* count, const apdu_resp_t* resp,
 	{
 		c = derTLEnc(0, 0x87, resp->rdf_len + 1);
 		ASSERT(c != SIZE_MAX);
+		offset += c + 1;
+		// зашифровать
+		beltCFBStart(st->stack, st->key2, 32, st->ctr);
+		//beltCFBStepE(data, resp->rdf_len, st->stack);
+		isolateOperation(apdu + offset, apdu, resp->rdf_len, beltCFBStepE, st->stack);
 		// подготовить значение
-		memMove(apdu + c + 1, apdu, resp->rdf_len);
 		apdu[c] = 0x02;
 		// кодировать TL
 		c = derTLEnc(apdu, 0x87, resp->rdf_len + 1);
 		ASSERT(c != SIZE_MAX);
-		offset += c + 1;
-		// зашифровать
-		beltCFBStart(st->stack, st->key2, 32, st->ctr);
-		beltCFBStepE(apdu + offset, resp->rdf_len, st->stack);
 		// дальше
 		offset += resp->rdf_len;
 	}
