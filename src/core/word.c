@@ -11,12 +11,13 @@
 */
 
 #include "bee2/core/word.h"
-#include<string.h>
+#include "bee2/core/mem.h"
+#include "bee2/core/util.h"
 
 word wordLoad(const void* buf)
 {
 	word w;
-	memcpy(&w, buf, O_PER_W);
+	memCopy(&w, buf, O_PER_W);
 #if (OCTET_ORDER == BIG_ENDIAN)
 	w = wordRev(w);
 #endif // OCTET_ORDER	
@@ -28,5 +29,23 @@ void wordSave(void* buf, word w)
 #if (OCTET_ORDER == BIG_ENDIAN)
 	w = wordRev(w);
 #endif // OCTET_ORDER	
-	memcpy(buf, &w, O_PER_W);
+	memCopy(buf, &w, O_PER_W);
+}
+
+void wordTo(void* dest, size_t count, const word src[])
+{
+	ASSERT(memIsValid(src, (count + O_PER_W - 1) / O_PER_W * O_PER_W));
+	ASSERT(memIsValid(dest, count));
+#if (OCTET_ORDER == BIG_ENDIAN)
+	if (count % O_PER_W)
+	{
+		size_t t = count / O_PER_W;
+		word u = wordRev(src[t]);
+		memCopy(dest + t * O_PER_W, &u, count % O_PER_W);
+	}
+	for (count /= O_PER_W; count--;)
+		wordSaveI(dest, count, src[count]);
+#else
+	memMove(dest, src, count);
+#endif // OCTET_ORDER
 }

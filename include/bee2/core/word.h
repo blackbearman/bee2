@@ -219,6 +219,10 @@ void wordSave(
 	word w			/*!< [in] машинное слово */
 );
 
+#define wordSaveI(buf, i, w) (wordSave((void*)buf + i * O_PER_W, w))
+
+void wordTo(void* dest, size_t count, const word src[]);
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
