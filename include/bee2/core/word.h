@@ -210,6 +210,15 @@ word wordLoad(
 
 #define wordLoadI(a, i) (wordLoad(a + i * O_PER_W))
 
+/*!	\brief Сохранение машинного слова в память
+
+	Выполняется безопасная выгрузка машинного слова в невыровненную память buf.
+*/
+void wordSave(
+	void* buf,		/*!< [out] буфер памяти */
+	word w			/*!< [in] машинное слово */
+);
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif

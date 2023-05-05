@@ -22,3 +22,11 @@ word wordLoad(const void* buf)
 #endif // OCTET_ORDER	
 	return w;
 }
+
+void wordSave(void* buf, word w)
+{
+#if (OCTET_ORDER == BIG_ENDIAN)
+	w = wordRev(w);
+#endif // OCTET_ORDER	
+	memcpy(buf, &w, O_PER_W);
+}

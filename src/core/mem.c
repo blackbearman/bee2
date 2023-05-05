@@ -253,10 +253,6 @@ int SAFE(memCmpRev)(const void* buf1, const void* buf2, size_t count)
 	{
 		w1 = wordLoad(buf1 + count * O_PER_W);
 		w2 = wordLoad(buf2 + count * O_PER_W);
-#if (OCTET_ORDER == BIG_ENDIAN)
-		w1 = wordRev(w1);
-		w2 = wordRev(w2);
-#endif
 		less |= ~greater & wordLess(w1, w2);
 		greater |= ~less & wordGreater(w1, w2);
 	}
@@ -483,7 +479,7 @@ void memXor2(void* dest, const void* src, size_t count)
 	for (; count >= O_PER_W; count -= O_PER_W)
 	{
 		word w = wordLoad(dest) ^ wordLoad(src);
-		memcpy(dest, &w, O_PER_W);
+		wordSave(dest, w);
 		src = (const word*)src + 1;
 		dest = (word*)dest + 1;
 	}
