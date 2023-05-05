@@ -49,9 +49,10 @@ extern "C" {
 
 union _block{
     octet b1[16];
-#if (B_PER_W == 32)
+#if (B_PER_W >= 16)
     u16 b2[8];
-#elif (B_PER_W == 64)
+#endif
+#if (B_PER_W >= 32)
     u32 b4[4];
 #endif
     word w[W_OF_B(128)];
@@ -100,10 +101,10 @@ typedef union _block block_t;
     memCopy(dest, src, 16);
 
 #define beltBlockRevU32(block)\
-	((u32*)(block))[0] = u32Rev(((u32*)(block))[0]),\
-	((u32*)(block))[1] = u32Rev(((u32*)(block))[1]),\
-	((u32*)(block))[2] = u32Rev(((u32*)(block))[2]),\
-	((u32*)(block))[3] = u32Rev(((u32*)(block))[3])\
+	((block_t*)(block))->b4[0] = u32Rev(((block_t*)(block))->b4[0]),\
+	((block_t*)(block))->b4[1] = u32Rev(((block_t*)(block))->b4[1]),\
+	((block_t*)(block))->b4[2] = u32Rev(((block_t*)(block))->b4[2]),\
+	((block_t*)(block))->b4[3] = u32Rev(((block_t*)(block))->b4[3])\
 
 #define beltBlockIncU32(block)\
 	if ((((u32*)(block))[0] += 1) == 0 &&\

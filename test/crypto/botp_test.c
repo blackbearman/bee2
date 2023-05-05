@@ -30,11 +30,11 @@ bool_t botpTest()
 	octet state[2048];
 	octet ctr[8];
 	char otp[16], otp1[16], otp2[16], otp3[16];
-	const char suite[] = "OCRA-1:HOTP-HBELT-8:C-QN08-PHBELT-S064-T1M";
 	char q[32];
 	octet p[32];
 	char p_str[72];
 	char s_str[136];
+	const char suite[] = "OCRA-1:HOTP-HBELT-8:C-QN08-PHBELT-S064-T1M";
 	tm_time_t t;
 	// подготовить память
 	if (sizeof(state) < utilMax(3,

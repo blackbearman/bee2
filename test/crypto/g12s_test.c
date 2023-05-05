@@ -33,7 +33,7 @@ bool_t g12sTest()
 	octet pubkey[2 * G12S_FIELD_SIZE];
 	octet hash[64];
 	octet sig[2 * G12S_ORDER_SIZE];
-	octet echo[64];
+	word echo[W_OF_O(64)];
 	// подготовить память
 	if (sizeof(echo) < prngEcho_keep() ||
 		sizeof(echo) < prngCOMBO_keep())

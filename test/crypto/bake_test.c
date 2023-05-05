@@ -200,8 +200,8 @@ bool_t bakeTest()
 	bign_params params[1];
 	octet randa[48];
 	octet randb[48];
-	octet echoa[64];
-	octet echob[64];
+	word echoa[W_OF_O(64)];
+	word echob[W_OF_O(64)];
 	octet keya[32];
 	octet keyb[32];
 	octet secret[32];
