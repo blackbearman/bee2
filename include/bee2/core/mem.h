@@ -4,7 +4,7 @@
 \brief Memory management
 \project bee2 [cryptographic library]
 \created 2012.07.16
-\version 2023.02.02
+\version 2023.06.01
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -175,6 +175,12 @@ bool_t memIsAligned(
 	const void* buf,	/*!< [in] буфер */
 	size_t size			/*!< [in] длина блока */
 );
+
+/*! \brief Получить выровненный буфер памяти
+
+	Возвращается выровненный на границу слова буфер.
+*/
+#define memAlign(buf) (((uintptr_t)buf + O_PER_W - 1) & ~(O_PER_W - 1));
 
 
 /*!	\brief Проверка совпадения

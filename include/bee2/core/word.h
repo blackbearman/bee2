@@ -4,7 +4,7 @@
 \brief Machine words
 \project bee2 [cryptographic library]
 \created 2014.07.18
-\version 2019.06.27
+\version 2023.06.01
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -198,6 +198,34 @@ extern "C" {
 #define wordLeq0M(a, b) ((word)(wordGreater01(a, b) - WORD_1))
 #define wordGreater0M(a, b) ((word)(wordLeq01(a, b) - WORD_1))
 #define wordGeq0M(a, b) ((word)(wordLess01(a, b) - WORD_1))
+
+/*!	\brief Загрузка октетов в машинное слово
+
+	Выполняется безопасная загрузка машинного слова из невыровненной памяти buf.
+	\return Машинное слово
+*/
+word wordLoad(
+	const void* buf		/*!< [in] буфер памяти */
+);
+
+#define wordLoadI(a, i) (wordLoad(a + i * O_PER_W))
+
+/*!	\brief Сохранение машинного слова в память
+
+	Выполняется безопасная выгрузка машинного слова в невыровненную память buf.
+*/
+void wordSave(
+	void* buf,		/*!< [out] буфер памяти */
+	word w			/*!< [in] машинное слово */
+);
+
+#define wordSaveI(buf, i, w) (wordSave((void*)buf + i * O_PER_W, w))
+
+/*!	\brief Сохранение массива машинных слов в память
+
+	Выполняется безопасная выгрузка count байт из массива src в память dest.
+*/
+void wordTo(void* dest, size_t count, const word src[]);
 
 #ifdef __cplusplus
 } /* extern "C" */
