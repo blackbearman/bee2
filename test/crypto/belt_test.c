@@ -131,10 +131,11 @@ bool_t beltTest()
 	u32 key[8];
 	u32 block[4];
 	octet level[12];
-	octet state[1024];
+	word _state[W_OF_O(1024)];
+	octet* state = (octet*) _state;
 	size_t count;
 	// подготовить память
-	if (sizeof(state) < utilMax(17,
+	if (sizeof(_state) < utilMax(17,
 		256,
 		beltWBL_keep(),
 		beltCompr_deep(),

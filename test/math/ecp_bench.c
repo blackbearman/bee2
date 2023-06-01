@@ -38,7 +38,7 @@ bool_t ecpBench()
 	// описание кривой
 	bign_params params[1];
 	// состояние
-	octet state[6000];
+	word state[W_OF_O(6000)];
 	ec_o* ec;
 	octet* combo_state;
 	word* pt;

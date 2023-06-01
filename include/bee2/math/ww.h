@@ -22,6 +22,7 @@
 
 #include "bee2/defs.h"
 #include "bee2/core/safe.h"
+#include "bee2/core/word.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -68,7 +69,7 @@ extern "C" {
 #elif (B_PER_W == 64)
 	#include "bee2/core/u64.h"
 	#define wwRev2 u64Rev2
-	#define wwTo u64To
+	#define wwTo wordTo
 	#define wwFrom u64From
 #else
 	#error "Unsupported word size"

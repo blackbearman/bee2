@@ -37,7 +37,7 @@ Russia and Ukraine.
 ```
 mkdir build
 cd build
-cmake [-DCMAKE_BUILD_TYPE={Release|Debug|Coverage|ASan|ASanDbg|MemSan|MemSanDbg|Check}]\
+cmake [-DCMAKE_BUILD_TYPE={Release|Debug|Coverage|ASan|ASanDbg|MemSan|MemSanDbg|AlignSan|Check}]\
       [-DBUILD_FAST=ON]\
       [-DBASH_PLATFORM={BASH_32|BASH_64|BASH_AVX2|BASH_AVX512|BASH_NEON}]\
       ..
@@ -52,7 +52,7 @@ compiler:
 > ```
 > mkdir build
 > cd build
-> cmake [-DCMAKE_BUILD_TYPE={Release|Debug|Coverage|ASan|ASanDbg|MemSan|MemSanDbg|Check}]\
+> cmake [-DCMAKE_BUILD_TYPE={Release|Debug|Coverage|ASan|ASanDbg|MemSan|MemSanDbg|AlignSan|Check}]\
 >       [-DBUILD_FAST=ON]\
 >       [-DBASH_PLATFORM={BASH_32|BASH_64|BASH_AVX2|BASH_AVX512|BASH_NEON}]\
 >       -G "MinGW Makefiles"\
@@ -67,6 +67,7 @@ Build types (`Release` by default):
 *  `Coverage` — test coverage;
 *  `ASan`, `ASanDbg` — [address sanitizer](http://en.wikipedia.org/wiki/AddressSanitizer);
 *  `MemSan`, `MemSanDbg` — [memory sanitizer](http://code.google.com/p/memory-sanitizer/);
+*  `AlignSan` — [alignment check from undefined behavior sanitizer](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html);
 *  `Check` — strict compile rules.
 
 The `BUILD_FAST` option (`OFF` by default) switches from safe (constant-time) 

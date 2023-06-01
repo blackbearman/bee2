@@ -104,7 +104,7 @@ CV-сертификаты
 
 static bool_t btokCVCTest()
 {
-	octet echo[256];
+	word echo[W_OF_O(256)];
 	btok_cvc_t cvc0[1];
 	btok_cvc_t cvc1[1];
 	btok_cvc_t cvc2[1];
@@ -424,8 +424,8 @@ static err_t bakeTestCertVal(octet* pubkey, const bign_params* params,
 bool_t btokBAUTHTest() 
 {
 	bign_params params[1];
-	octet echoa[64];
-	octet echob[64];
+	word echoa[W_OF_O(64)];
+	word echob[W_OF_O(64)];
 	bake_settings settingsa[1];
 	bake_settings settingsb[1];
 	octet da[32];

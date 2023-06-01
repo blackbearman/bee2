@@ -66,5 +66,5 @@
 build
 clear.cmd
 build_*
-.vscode/
-.idea/
+.idea/*
+.vscode/*

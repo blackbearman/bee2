@@ -208,7 +208,20 @@ word wordLoad(
 	const void* buf		/*!< [in] буфер памяти */
 );
 
-#define wordLoadI(a, i) ((wordLoad(a + i * B_PER_W))
+#define wordLoadI(a, i) (wordLoad(a + i * O_PER_W))
+
+/*!	\brief Сохранение машинного слова в память
+
+	Выполняется безопасная выгрузка машинного слова в невыровненную память buf.
+*/
+void wordSave(
+	void* buf,		/*!< [out] буфер памяти */
+	word w			/*!< [in] машинное слово */
+);
+
+#define wordSaveI(buf, i, w) (wordSave((void*)buf + i * O_PER_W, w))
+
+void wordTo(void* dest, size_t count, const word src[]);
 
 #ifdef __cplusplus
 } /* extern "C" */

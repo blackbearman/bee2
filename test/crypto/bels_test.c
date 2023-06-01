@@ -34,10 +34,10 @@ bool_t belsTest()
 	octet m0[32];
 	octet mi[32 * 5];
 	octet s[32];
-	octet si[33 * 5];
+	word echo_state[W_OF_O(64)];
+	word combo_state[W_OF_O(512)];
+	octet si[33 * 5 + 3];
 	char id[] = "Alice";
-	octet echo_state[64];
-	octet combo_state[512];
 	// подготовить память
 	if (sizeof(echo_state) < prngEcho_keep() ||
 		sizeof(combo_state) < prngCOMBO_keep())

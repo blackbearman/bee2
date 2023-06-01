@@ -94,7 +94,7 @@ bool_t pfokTestStdParams()
 bool_t pfokTest()
 {
 	pfok_params params[1];
-	octet combo_state[128];
+	word combo_state[W_OF_O(128)];
 	octet ua[O_OF_B(130)];
 	octet xa[O_OF_B(130)];
 	octet vb[O_OF_B(638)];

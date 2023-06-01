@@ -110,9 +110,9 @@ bool_t bignTest()
 	word k[W_OF_O(32)];
 	word S0[W_OF_O(32)];
 	word S1[W_OF_O(32)];
+	octet key[32];
 	char pwd[] = "B194BAC80A08F53B";
 	size_t iter = 10000;
-	octet key[32];
 	// подготовить память
 	if (sizeof(brng_state) < brngCTRX_keep() ||
 		sizeof(zz_stack) < zzMulMod_deep(W_OF_O(32)))

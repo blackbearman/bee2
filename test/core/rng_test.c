@@ -26,7 +26,8 @@
 bool_t rngTest()
 {
 	const char* sources[] = { "trng", "trng2", "sys", "timer" };
-	octet buf[2500];
+	word _buf[W_OF_O(2500)];
+	octet* buf = (octet*) _buf;
 	char hex[33];
 	size_t read;
 	size_t pos;

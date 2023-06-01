@@ -49,6 +49,12 @@ extern "C" {
 
 union _block{
     octet b1[16];
+#if (B_PER_W >= 16)
+    u16 b2[8];
+#endif
+#if (B_PER_W >= 32)
+    u32 b4[4];
+#endif
     word w[W_OF_B(128)];
 };
 typedef union _block block_t;
@@ -71,19 +77,19 @@ typedef union _block block_t;
 
 #define beltHalfBlockIsZero(block)\
     ({ \
-        int _x = 0; \
+        int _x = 1; \
         for(int _i = 0; _i < W_OF_B(128)/2; _i++) \
-            _x |= (((block_t*)(block))->w[_i] == 0);\
+            _x &= (((block_t*)(block))->w[_i] == 0);\
         _x;\
     }) 
-/*
 #define beltBlockXor2(dest, src)\
     for(int _i = 0; _i < W_OF_B(128); _i++) \
 	    ((block_t*)(dest))->w[_i] ^= ((const block_t*)(src))->w[_i];
-*/
+/*
 #define beltBlockXor2(dest, src)\
     for(int _i = 0; _i < 16; _i++) \
 	    ((octet*)(dest))[_i] ^= ((const octet*)(src))[_i];
+*/
 
 /*
 #define beltBlockCopy(dest, src)\
@@ -95,10 +101,10 @@ typedef union _block block_t;
     memCopy(dest, src, 16);
 
 #define beltBlockRevU32(block)\
-	((u32*)(block))[0] = u32Rev(((u32*)(block))[0]),\
-	((u32*)(block))[1] = u32Rev(((u32*)(block))[1]),\
-	((u32*)(block))[2] = u32Rev(((u32*)(block))[2]),\
-	((u32*)(block))[3] = u32Rev(((u32*)(block))[3])\
+	((block_t*)(block))->b4[0] = u32Rev(((block_t*)(block))->b4[0]),\
+	((block_t*)(block))->b4[1] = u32Rev(((block_t*)(block))->b4[1]),\
+	((block_t*)(block))->b4[2] = u32Rev(((block_t*)(block))->b4[2]),\
+	((block_t*)(block))->b4[3] = u32Rev(((block_t*)(block))->b4[3])\
 
 #define beltBlockIncU32(block)\
 	if ((((u32*)(block))[0] += 1) == 0 &&\
