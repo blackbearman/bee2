@@ -18,13 +18,13 @@ option(INSTALL_HEADERS "Install headers." ON)
 if(CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE}
       CACHE STRING "Choose the type of build: \
-        Release Debug Coverage ASan ASanDbg MemSan MemSanDbg Check"
+        Release Debug Coverage ASan ASanDbg MemSan MemSanDbg AlignSan Check"
       FORCE)
 else()
   set(CMAKE_BUILD_TYPE Release
       CACHE STRING 
       "Choose the type of build: \
-        Release Debug Coverage ASan ASanDbg MemSan MemSanDbg Check"
+        Release Debug Coverage ASan ASanDbg MemSan MemSanDbg AlignSan Check"
       FORCE)
 endif()
 
@@ -68,7 +68,7 @@ endif()
 # * https://clang.llvm.org/docs/DiagnosticsReference.html
 
 set(CMAKE_C_WARNINGS "-Wall -Wextra -W -Wdeclaration-after-statement \
-  -Wwrite-strings -Wno-parentheses -Wno-unused-parameter -Wno-strict-aliasing \
+  -Wwrite-strings -Wno-parentheses -Wno-unused-parameter \
   -Wno-xor-used-as-pow")
 
 if(CMAKE_COMPILER_IS_GNUCC)
@@ -83,13 +83,13 @@ if(CMAKE_COMPILER_IS_GNUCC)
   elseif(BASH_NEON)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
   endif()
-  set(CMAKE_C_FLAGS_RELEASE    "-O2 -fno-strict-aliasing")
+  set(CMAKE_C_FLAGS_RELEASE    "-O2 -DNDEBUG")
   set(CMAKE_C_FLAGS_DEBUG      "-O0 -g3")
   set(CMAKE_C_FLAGS_COVERAGE   "-O0 -g3 -coverage")
-  set(CMAKE_C_FLAGS_ASAN       "-fsanitize=address -fno-common \
-    -O3 -fno-strict-aliasing")
+  set(CMAKE_C_FLAGS_ASAN       "-fsanitize=address -fno-common -O3")
   set(CMAKE_C_FLAGS_ASANDBG    "-fsanitize=address -fno-common -O1 -g3 \
     -fno-omit-frame-pointer -fno-optimize-sibling-calls")
+  set(CMAKE_C_FLAGS_ALIGNSAN   "-fsanitize=alignment")
   set(CMAKE_C_FLAGS_CHECK      "-Werror -O1 -Wcast-qual -fanalyzer")
 endif(CMAKE_COMPILER_IS_GNUCC)
 
@@ -107,18 +107,19 @@ if(CMAKE_COMPILER_IS_CLANG)
   elseif(BASH_NEON)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
   endif()
-  set(CMAKE_C_FLAGS_RELEASE    "-O3 -fno-strict-aliasing")
+  set(CMAKE_C_FLAGS_RELEASE    "-O3 -DNDEBUG")
   set(CMAKE_C_FLAGS_DEBUG      "-O0 -g3")
   set(CMAKE_C_FLAGS_COVERAGE   "-O0 -g3 -coverage")
   set(CMAKE_C_FLAGS_ASAN       "-fsanitize=address -fno-common \
-    -fsanitize=undefined -fno-sanitize-recover -O3 -fno-strict-aliasing")
+    -fsanitize=undefined -fno-sanitize-recover -O3")
   set(CMAKE_C_FLAGS_ASANDBG    "-fsanitize=address -fno-common \
     -fsanitize=undefined -fno-sanitize-recover -O1 -g3 \
     -fno-omit-frame-pointer -fno-optimize-sibling-calls")
-  set(CMAKE_C_FLAGS_MEMSAN     "-fsanitize=memory -O3 -fno-strict-aliasing")
+  set(CMAKE_C_FLAGS_MEMSAN     "-fsanitize=memory -O3")
   set(CMAKE_C_FLAGS_MEMSANDBG  "-fsanitize=memory -O1 -g3 \
     -fno-omit-frame-pointer -fno-optimize-sibling-calls \
     -fsanitize-memory-track-origins=2")
+  set(CMAKE_C_FLAGS_ALIGNSAN   "-fsanitize=alignment")
   set(CMAKE_C_FLAGS_CHECK      "-Werror -O1 -Wcast-qual")
 endif(CMAKE_COMPILER_IS_CLANG)
 
