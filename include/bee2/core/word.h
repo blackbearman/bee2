@@ -4,7 +4,7 @@
 \brief Machine words
 \project bee2 [cryptographic library]
 \created 2014.07.18
-\version 2023.06.01
+\version 2023.06.02
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -225,7 +225,91 @@ void wordSave(
 
 	Выполняется безопасная выгрузка count байт из массива src в память dest.
 */
-void wordTo(void* dest, size_t count, const word src[]);
+void wordsTo(void* dest, size_t count, const word src[]);
+
+/*!	\brief Инвертировать буфер памяти
+
+	Все биты буфера [count]buf инвертируются.
+	\remark Для невыровненной памяти есть аналогичная функция memNeg
+*/
+void wordsNeg( 
+	void* buf,			/*< [in,out] буфер */
+	size_t count		/*< [in] число октетов */
+);
+
+/*!	\brief Обратное сравнение
+
+	Буферы [count]buf1 и [count]buf2 сравниваются обратно-лексикографически.
+	\return < 0, если [count]buf1 < [count]buf2, 
+	0, если [count]buf1 == [count]buf2, 
+	> 0, если [count]buf1 > [count]buf2.
+	\remark Октеты буферов сравниваются последовательно, от последнего 
+	к первому. Первое несовпадение задает соотношение между буферами.
+	\safe Имеется ускоренная нерегулярная редакция.
+	\remark Для невыровненной памяти есть аналогичная функция memCmpRev
+*/
+int wordsCmpRev(
+	const void* buf1,	/*!< [in] первый буфер */
+	const void* buf2,	/*!< [in] второй буфер */
+	size_t count		/*!< [in] размер буферов */
+);
+int SAFE(wordsCmpRev)(const void* buf1, const void* buf2, size_t count);
+int FAST(wordsCmpRev)(const void* buf1, const void* buf2, size_t count);
+
+/*!	\brief Нулевой буфер памяти?
+
+	Проверяется, что буфер [count]buf является нулевым.
+	\return Проверяемый признак.
+	\safe Имеется ускоренная нерегулярная редакция.
+	\remark Для невыровненной памяти есть аналогичная функция memIsZero
+*/
+bool_t wordsIsZero(
+	const void* buf,	/*!< [out] буфер */
+	size_t count		/*!< [in] размер буфера */
+);
+
+bool_t SAFE(wordsIsZero)(const void* buf, size_t count);
+bool_t FAST(wordsIsZero)(const void* buf, size_t count);
+
+/*!	\brief Cложение октетов памяти по модулю 2
+
+	В буфер [count]dest записывается поразрядная по модулю 2 сумма октетов
+	октетов буферов [count]src1 и [count]src2.
+	\pre Буфер dest либо не пересекается, либо совпадает с каждым из
+	буферов src1, src2.
+	\remark Для невыровненной памяти есть аналогичная функция memXor
+*/
+void wordsXor(
+	void* dest,			/*!< [out] сумма */
+	const void* src1,	/*!< [in] первое слагаемое */
+	const void* src2,	/*!< [in] второе слагаемое */
+	size_t count		/*!< [in] число октетов */
+);
+
+/*!	\brief Добавление октетов памяти по модулю 2
+
+	К октетам буфера [count]dest добавляются октеты буфера [count]src. 
+	Сложение выполняется поразрядно по модулю 2.
+	\pre Буфер dest либо не пересекается, либо совпадает с буфером src.
+	\remark Для невыровненной памяти есть аналогичная функция memXor2
+*/
+void wordsXor2(
+	void* dest,			/*!< [in,out] второе слагаемое / сумма */
+	const void* src,	/*!< [in] первое слагаемое */
+	size_t count		/*!< [in] число октетов */
+);
+
+/*!	\brief Перестановка октетов памяти
+
+	Октеты буферов [count]buf1 и [count]buf2 меняются местами. 
+	\pre Буферы buf1 и buf2 не пересекаются.
+	\remark Для невыровненной памяти есть аналогичная функция memSwap
+*/
+void wordsSwap(
+	void* buf1,		/*!< [in,out] первый буфер */
+	void* buf2,		/*!< [in,out] второй буфер */
+	size_t count	/*!< [in] число октетов */
+);
 
 #ifdef __cplusplus
 } /* extern "C" */

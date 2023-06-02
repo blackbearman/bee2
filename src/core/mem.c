@@ -4,7 +4,7 @@
 \brief Memory management
 \project bee2 [cryptographic library]
 \created 2012.12.18
-\version 2019.07.09
+\version 2023.06.02
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -81,11 +81,6 @@ void memSet(void* buf, octet c, size_t count)
 void memNeg(void* buf, size_t count)
 {
 	ASSERT(memIsValid(buf, count));
-	for (; count >= O_PER_W; count -= O_PER_W)
-	{
-		*(word*)buf = ~*(word*)buf;
-		buf = (word*)buf + 1;
-	}
 	while (count--)
 	{
 		*(octet*)buf = ~*(octet*)buf;
@@ -162,12 +157,6 @@ bool_t SAFE(memEq)(const void* buf1, const void* buf2, size_t count)
 	register word diff = 0;
 	ASSERT(memIsValid(buf1, count));
 	ASSERT(memIsValid(buf2, count));
-	for (; count >= O_PER_W; count -= O_PER_W)
-	{
-		diff |= *(const word*)buf1 ^ *(const word*)buf2;
-		buf1 = (const word*)buf1 + 1;
-		buf2 = (const word*)buf2 + 1;
-	}
 	while (count--)
 	{
 		diff |= *(const octet*)buf1 ^ *(const octet*)buf2;
@@ -237,9 +226,10 @@ int SAFE(memCmpRev)(const void* buf1, const void* buf2, size_t count)
 	register word w2;
 	ASSERT(memIsValid(buf1, count));
 	ASSERT(memIsValid(buf2, count));
-	if (count % O_PER_W)
+	while (count)
 	{
-		w1 = w2 = 0;
+		w1 = ((const octet*)buf1)[--count];
+		w2 = ((const octet*)buf2)[count];
 		while (count % O_PER_W)
 		{
 			w1 = w1 << 8 | ((const octet*)buf1)[--count];
@@ -248,19 +238,6 @@ int SAFE(memCmpRev)(const void* buf1, const void* buf2, size_t count)
 		less |= ~greater & wordLess01(w1, w2);
 		greater |= ~less & wordGreater01(w1, w2);
 	}
-	count /= O_PER_W;
-	while (count--)
-	{
-		w1 = ((const word*)buf1)[count];
-		w2 = ((const word*)buf2)[count];
-#if (OCTET_ORDER == BIG_ENDIAN)
-		w1 = wordRev(w1);
-		w2 = wordRev(w2);
-#endif
-		less |= ~greater & wordLess(w1, w2);
-		greater |= ~less & wordGreater(w1, w2);
-	}
-	w1 = w2 = 0;
 	return (wordEq(less, 0) - 1) | wordNeq(greater, 0);
 }
 
@@ -298,11 +275,6 @@ bool_t SAFE(memIsZero)(const void* buf, size_t count)
 {
 	register word diff = 0;
 	ASSERT(memIsValid(buf, count));
-	for (; count >= O_PER_W; count -= O_PER_W)
-	{
-		diff |= *(const word*)buf;
-		buf = (const word*)buf + 1;
-	}
 	while (count--)
 	{
 		diff |= *(const octet*)buf;
@@ -314,9 +286,6 @@ bool_t SAFE(memIsZero)(const void* buf, size_t count)
 bool_t FAST(memIsZero)(const void* buf, size_t count)
 {
 	ASSERT(memIsValid(buf, count));
-	for (; count >= O_PER_W; count -= O_PER_W, buf = (const word*)buf + 1)
-		if (*(const word*)buf)
-			return FALSE;
 	for (; count--; buf = (const octet*)buf + 1)
 		if (*(const octet*)buf)
 			return FALSE;
@@ -480,12 +449,6 @@ void memXor(void* dest, const void* src1, const void* src2, size_t count)
 void memXor2(void* dest, const void* src, size_t count)
 {
 	ASSERT(memIsSameOrDisjoint(src, dest, count));
-	for (; count >= O_PER_W; count -= O_PER_W)
-	{
-		*(word*)dest ^= *(const word*)src;
-		src = (const word*)src + 1;
-		dest = (word*)dest + 1;
-	}
 	while (count--)
 	{
 		*(octet*)dest ^= *(const octet*)src;
@@ -497,12 +460,6 @@ void memXor2(void* dest, const void* src, size_t count)
 void memSwap(void* buf1, void* buf2, size_t count)
 {
 	ASSERT(memIsDisjoint(buf1, buf2, count));
-	for (; count >= O_PER_W; count -= O_PER_W)
-	{
-		SWAP(*(word*)buf1, *(word*)buf2);
-		buf1 = (word*)buf1 + 1;
-		buf2 = (word*)buf2 + 1;
-	}
 	while (count--)
 	{
 		SWAP(*(octet*)buf1, *(octet*)buf2);
