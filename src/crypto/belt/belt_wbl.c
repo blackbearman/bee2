@@ -4,7 +4,7 @@
 \brief STB 34.101.31 (belt): wide block encryption
 \project bee2 [cryptographic library]
 \created 2017.11.03
-\version 2020.03.24
+\version 2023.06.03
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
