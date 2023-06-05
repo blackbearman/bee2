@@ -4,7 +4,7 @@
 \brief STB 34.101.31 (belt): local functions
 \project bee2 [cryptographic library]
 \created 2012.12.18
-\version 2020.03.20
+\version 2023.06.05
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -128,3 +128,80 @@ void beltBlockMulC(u32 block[4])
 	block[0] = (block[0] << 1) ^ t;
 	t = 0;
 }
+
+#ifndef NDEBUG
+
+void beltBlockSetZero(void* block) 
+{
+	ASSERT(memIsAligned(block, O_PER_W));
+	for(int i = 0; i < W_OF_B(128); i++) 
+        ((block_t*)(block))->w[i] = 0;
+}
+
+void beltBlockRevW(void* block) 
+{
+	ASSERT(memIsAligned(block, O_PER_W));
+	for(int i = 0; i < W_OF_B(128); i++) 
+	    ((block_t*)(block))->w[i] = wordRev(((block_t*)(block))->w[i]);
+}
+
+void beltBlockNeg(void* dest, void* src) 
+{
+	ASSERT(memIsAligned(dest, O_PER_W));
+	ASSERT(memIsAligned(src, O_PER_W));
+	for(int i = 0; i < W_OF_B(128); i++) 
+	    ((block_t*)(dest))->w[i] = ~((const block_t*)(src))->w[i];
+}
+
+void beltBlockXor(void* dest, const void* src1, const void* src2)
+{
+	ASSERT(memIsAligned(dest, O_PER_W));
+	ASSERT(memIsAligned(src1, O_PER_W));
+	ASSERT(memIsAligned(src2, O_PER_W));
+	for(int i = 0; i < W_OF_B(128); i++) 
+	    ((block_t*)(dest))->w[i] = ((const block_t*)(src1))->w[i] ^ 
+			((const block_t*)(src2))->w[i];
+}
+
+bool_t beltHalfBlockIsZero(void* block)
+{ 
+	bool_t result = 1; 
+	ASSERT(memIsAligned(block, O_PER_W));
+	for(int i = 0; i < W_OF_B(128)/2; i++) 
+		result &= (((block_t*)(block))->w[i] == 0);
+	return result;
+}
+
+void beltBlockXor2(void* dest, const void* src)
+{
+	ASSERT(memIsAligned(dest, O_PER_W));
+	ASSERT(memIsAligned(src, O_PER_W));
+    for(int i = 0; i < W_OF_B(128); i++) 
+	    ((block_t*)(dest))->w[i] ^= ((const block_t*)(src))->w[i];
+}
+
+void beltBlockCopy(void* dest, const void* src)\
+{
+	ASSERT(memIsAligned(dest, O_PER_W));
+	ASSERT(memIsAligned(src, O_PER_W));
+    for(int i = 0; i < W_OF_B(128); i++) 
+	    ((block_t*)(dest))->w[i] = ((const block_t*)(src))->w[i];
+}
+
+void beltBlockRevU32(void* block)
+{
+	ASSERT(memIsAligned(block, O_PER_W));
+	for(int i = 0; i < 4; i++) 
+		((block_t*)(block))->b4[i] = u32Rev(((block_t*)(block))->b4[i]);
+}
+
+void beltBlockIncU32(void* block)
+{
+	ASSERT(memIsAligned(block, O_PER_W));
+	if ((((u32*)(block))[0] += 1) == 0 &&
+		(((u32*)(block))[1] += 1) == 0 &&
+		(((u32*)(block))[2] += 1) == 0)
+		((u32*)(block))[3] += 1;
+}
+
+#endif

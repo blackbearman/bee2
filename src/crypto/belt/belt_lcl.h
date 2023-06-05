@@ -4,7 +4,7 @@
 \brief STB 34.101.31 (belt): local definitions
 \project bee2 [cryptographic library]
 \created 2012.12.18
-\version 2020.03.20
+\version 2023.06.05
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -15,6 +15,7 @@
 
 #include "bee2/core/word.h"
 #include "bee2/core/u32.h"
+#include "bee2/core/util.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,6 +47,8 @@ extern "C" {
 массив word.
 *******************************************************************************
 */
+
+#ifdef NDEBUG
 
 #if (B_PER_W == 16)
 
@@ -187,6 +190,7 @@ extern "C" {
 	#error "Unsupported word size"
 #endif // B_PER_W
 
+
 #define beltBlockRevU32(block)\
 	((u32*)(block))[0] = u32Rev(((u32*)(block))[0]),\
 	((u32*)(block))[1] = u32Rev(((u32*)(block))[1]),\
@@ -198,6 +202,45 @@ extern "C" {
 		(((u32*)(block))[1] += 1) == 0 &&\
 		(((u32*)(block))[2] += 1) == 0)\
 		((u32*)(block))[3] += 1\
+
+#else  // NDEBUG
+
+union _block 
+{
+    octet b1[16];
+#if (B_PER_W >= 16)
+    u16 b2[8];
+#endif
+#if (B_PER_W >= 32)
+    u32 b4[4];
+#endif
+    word w[W_OF_B(128)];
+};
+typedef union _block block_t;
+
+void beltBlockSetZero(void* block);
+
+void beltBlockRevW(void* block);
+
+void beltBlockNeg(void* dest, void* src);
+
+void beltBlockXor(void* dest, const void* src1, const void* src2);
+
+bool_t beltHalfBlockIsZero(void* block);
+
+void beltBlockXor2(void* dest, const void* src);
+
+void beltBlockCopy(void* dest, const void* src);
+/*
+#define beltBlockCopy(dest, src)\
+    memCopy(dest, src, 16);
+*/
+
+void beltBlockRevU32(void* block);
+void beltBlockIncU32(void* block);
+
+#endif  // NDEBUG
+
 
 /*
 *******************************************************************************
