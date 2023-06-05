@@ -4,7 +4,7 @@
 \brief Memory management
 \project bee2 [cryptographic library]
 \created 2012.07.16
-\version 2023.02.02
+\version 2023.06.02
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -106,6 +106,7 @@ void memSet(
 /*!	\brief Инвертировать буфер памяти
 
 	Все биты буфера [count]buf инвертируются.
+	\remark Для выровненной памяти есть аналогичная функция wordsNeg
 */
 void memNeg( 
 	void* buf,			/*< [in,out] буфер */
@@ -176,12 +177,19 @@ bool_t memIsAligned(
 	size_t size			/*!< [in] длина блока */
 );
 
+/*! \brief Получить выровненный буфер памяти
+
+	Возвращается выровненный на границу слова буфер.
+*/
+#define memAlign(buf) (((uintptr_t)buf + O_PER_W - 1) & ~(O_PER_W - 1));
+
 
 /*!	\brief Проверка совпадения
 
 	Проверяется, что содержимое буферов [count]buf1 и [count]buf2 совпадает. 
 	\return Признак совпадения.
 	\safe Имеется ускоренная нерегулярная редакция.
+	\remark Для выровненной памяти есть аналогичная функция wordsEq
 */
 bool_t memEq(
 	const void* buf1,	/*!< [in] первый буфер */
@@ -221,6 +229,7 @@ int FAST(memCmp)(const void* buf1, const void* buf2, size_t count);
 	\remark Октеты буферов сравниваются последовательно, от последнего 
 	к первому. Первое несовпадение задает соотношение между буферами.
 	\safe Имеется ускоренная нерегулярная редакция.
+	\remark Для выровненной памяти есть аналогичная функция wordsCmpRev
 */
 int memCmpRev(
 	const void* buf1,	/*!< [in] первый буфер */
@@ -247,6 +256,7 @@ void memWipe(
 	Проверяется, что буфер [count]buf является нулевым.
 	\return Проверяемый признак.
 	\safe Имеется ускоренная нерегулярная редакция.
+	\remark Для выровненной памяти есть аналогичная функция wordsIsZero
 */
 bool_t memIsZero(
 	const void* buf,	/*!< [out] буфер */
@@ -378,6 +388,7 @@ bool_t memIsDisjoint4(
 	октетов буферов [count]src1 и [count]src2.
 	\pre Буфер dest либо не пересекается, либо совпадает с каждым из
 	буферов src1, src2.
+	\remark Для выровненной памяти есть аналогичная функция wordsXor
 */
 void memXor(
 	void* dest,			/*!< [out] сумма */
@@ -391,6 +402,7 @@ void memXor(
 	К октетам буфера [count]dest добавляются октеты буфера [count]src. 
 	Сложение выполняется поразрядно по модулю 2.
 	\pre Буфер dest либо не пересекается, либо совпадает с буфером src.
+	\remark Для выровненной памяти есть аналогичная функция wordsXor2
 */
 void memXor2(
 	void* dest,			/*!< [in,out] второе слагаемое / сумма */
@@ -402,6 +414,7 @@ void memXor2(
 
 	Октеты буферов [count]buf1 и [count]buf2 меняются местами. 
 	\pre Буферы buf1 и buf2 не пересекаются.
+	\remark Для выровненной памяти есть аналогичная функция wordsSwap
 */
 void memSwap(
 	void* buf1,		/*!< [in,out] первый буфер */

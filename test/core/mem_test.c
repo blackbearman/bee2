@@ -4,7 +4,7 @@
 \brief Tests for memory functions
 \project bee2/test
 \created 2014.02.01
-\version 2023.03.06
+\version 2023.06.02
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -36,6 +36,7 @@ bool_t memTest()
 	void* p;
 	void* p1;
 	size_t i;
+	size_t n = sizeof(buf);
 	// pre
 	CASSERT(sizeof(buf) == sizeof(buf1));
 	memSetZero(buf, sizeof(buf));
@@ -166,6 +167,31 @@ bool_t memTest()
 		return FALSE;
 	memXor2(buf2, buf1, 9);
 	memXor2(buf2, buf, 8);
+	if (!memIsRep(buf2, 8, 0) || buf2[8] != 0x08)
+		return FALSE;
+	// neg
+	memCopy(buf2, buf1, n);
+	memNeg(buf1, n);
+	wordsNeg(buf2, n);
+	if (!memEq(buf1, buf2, n))
+		return FALSE;
+	if (!wordsEq(buf1, buf2, n))
+		return FALSE;
+	// cmpRev
+	if (FAST(memCmpRev)(buf1, buf2, n) != 0 ||
+		SAFE(memCmpRev)(buf1, buf2, n) != 0)
+		return FALSE;
+	if (FAST(wordsCmpRev)(buf1, buf2, n) != 0 ||
+		SAFE(wordsCmpRev)(buf1, buf2, n) != 0)
+		return FALSE;
+		// xor
+	hexTo(buf, "000102030405060708");
+	hexTo(buf1, "F0F1F2F3F4F5F6F7F8");
+	wordsXor(buf2, buf, buf1, 9);
+	if (!memIsRep(buf2, 9, 0xF0))
+		return FALSE;
+	wordsXor2(buf2, buf1, 9);
+	wordsXor2(buf2, buf, 8);
 	if (!memIsRep(buf2, 8, 0) || buf2[8] != 0x08)
 		return FALSE;
 	// все нормально

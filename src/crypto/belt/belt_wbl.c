@@ -4,7 +4,7 @@
 \brief STB 34.101.31 (belt): wide block encryption
 \project bee2 [cryptographic library]
 \created 2017.11.03
-\version 2020.03.24
+\version 2023.06.03
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -78,7 +78,7 @@ void beltWBLStepEBase(void* buf, size_t count, void* state)
 		st->round = wordRev(st->round);
 #endif // OCTET_ORDER
 		// r*_до_сдвига <- r*_до_сдвига + block
-		beltBlockXor2((octet*)buf + count - 32, st->block);
+		memXor2((octet*)buf + count - 32, st->block, 16);
 	}
 	while (st->round % (2 * n));
 }
@@ -153,7 +153,7 @@ void beltWBLStepDBase(void* buf, size_t count, void* state)
 		st->round = wordRev(st->round);
 #endif // OCTET_ORDER
 		// r* <- r* + block
-		beltBlockXor2((octet*)buf + count - 16, st->block);
+		memXor2((octet*)buf + count - 16, st->block, 16);
 		// r1 <- r1 + r2 + ... + r_{n-1}
 		for (i = 16; i + 16 < count; i += 16)
 			beltBlockXor2(buf, (octet*)buf + i);
@@ -242,7 +242,7 @@ void beltWBLStepD2(void* buf1, void* buf2, size_t count, void* state)
 		st->round = wordRev(st->round);
 #endif // OCTET_ORDER
 		// r* <- r* + block
-		beltBlockXor2(buf2, st->block);
+		memXor2(buf2, st->block, 16);
 		// r1 <- r1 + r2 + ... + r_{n-1}
 		for (i = 16; i + 32 < count; i += 16)
 			beltBlockXor2(buf1, (octet*)buf1 + i);
