@@ -4,7 +4,7 @@
 \brief STB 34.101.31 (belt): block encryption
 \project bee2 [cryptographic library]
 \created 2012.12.18
-\version 2019.06.26
+\version 2023.06.05
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -348,6 +348,7 @@ a <-> b, c <-> d, a <-> d.
 void beltBlockEncr(octet block[16], const u32 key[8])
 {
 	u32* t = (u32*)block;
+	ASSERT(memIsAligned(block, O_PER_W));
 	ASSERT(memIsDisjoint2(block, 16, key, 32));
 #if (OCTET_ORDER == BIG_ENDIAN)
 	t[0] = u32Rev(t[0]);
@@ -382,6 +383,7 @@ void beltBlockEncr3(u32* a, u32* b, u32* c, u32* d, const u32 key[8])
 void beltBlockDecr(octet block[16], const u32 key[8])
 {
 	u32* t = (u32*)block;
+	ASSERT(memIsAligned(block, O_PER_W));
 	ASSERT(memIsDisjoint2(block, 16, key, 32));
 #if (OCTET_ORDER == BIG_ENDIAN)
 	t[0] = u32Rev(t[0]);
