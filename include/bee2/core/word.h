@@ -4,7 +4,7 @@
 \brief Machine words
 \project bee2 [cryptographic library]
 \created 2014.07.18
-\version 2023.06.02
+\version 2023.06.06
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -227,6 +227,7 @@ void wordSave(
 */
 void wordsTo(void* dest, size_t count, const word src[]);
 
+
 /*!	\brief Инвертировать буфер памяти
 
 	Все биты буфера [count]buf инвертируются.
@@ -236,6 +237,23 @@ void wordsNeg(
 	void* buf,			/*< [in,out] буфер */
 	size_t count		/*< [in] число октетов */
 );
+
+/*!	\brief Проверка совпадения
+
+	Проверяется, что содержимое буферов [count]buf1 и [count]buf2 совпадает. 
+	\return Признак совпадения.
+	\safe Имеется ускоренная нерегулярная редакция.
+	\remark Для невыровненной памяти есть аналогичная функция memEq
+*/
+bool_t wordsEq(
+	const void* buf1,	/*!< [in] первый буфер */
+	const void* buf2,	/*!< [in] второй буфер */
+	size_t count		/*!< [in] размер буферов */
+);
+
+bool_t SAFE(wordsEq)(const void* buf1, const void* buf2, size_t count);
+bool_t FAST(wordsEq)(const void* buf1, const void* buf2, size_t count);
+
 
 /*!	\brief Обратное сравнение
 
