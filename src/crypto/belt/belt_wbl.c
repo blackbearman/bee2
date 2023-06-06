@@ -220,11 +220,11 @@ void beltWBLStepD(void* buf, size_t count, void* state)
 
 void beltWBLStepD2(void* buf1, void* buf2, size_t count, void* state)
 {
-	ASSERT(memIsAligned(state, O_PER_W));
 	belt_wbl_st* st = (belt_wbl_st*)state;
 	word n = ((word)count + 15) / 16;
 	// pre
 	ASSERT(count >= 32);
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint3(buf1, count - 16, buf2, 16, state, beltWBL_keep()));
 	for (st->round = 2 * n; st->round; --st->round)
 	{
