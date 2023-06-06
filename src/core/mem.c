@@ -430,13 +430,6 @@ void memXor(void* dest, const void* src1, const void* src2, size_t count)
 {
 	ASSERT(memIsSameOrDisjoint(src1, dest, count));
 	ASSERT(memIsSameOrDisjoint(src2, dest, count));
-	for (; count >= O_PER_W; count -= O_PER_W)
-	{
-		*(word*)dest = *(const word*)src1 ^ *(const word*)src2;
-		src1 = (const word*)src1 + 1;
-		src2 = (const word*)src2 + 1;
-		dest = (word*)dest + 1;
-	}
 	while (count--)
 	{
 		*(octet*)dest = *(const octet*)src1 ^ *(const octet*)src2;
