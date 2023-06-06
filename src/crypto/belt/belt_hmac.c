@@ -4,7 +4,7 @@
 \brief STB 34.101.31 (belt): HMAC message authentication
 \project bee2 [cryptographic library]
 \created 2012.12.18
-\version 2022.07.18
+\version 2023.06.06
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -45,6 +45,7 @@ size_t beltHMAC_keep()
 void beltHMACStart(void* state, const octet key[], size_t len)
 {
 	belt_hmac_st* st = (belt_hmac_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint2(key, len, state, beltHMAC_keep()));
 	// key <- key || 0
 	if (len <= 32)
@@ -113,6 +114,7 @@ void beltHMACStart(void* state, const octet key[], size_t len)
 void beltHMACStepA(const void* buf, size_t count, void* state)
 {
 	belt_hmac_st* st = (belt_hmac_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint2(buf, count, state, beltHMAC_keep()));
 	// обновить длину
 	beltBlockAddBitSizeU32(st->ls_in, count);
@@ -138,8 +140,7 @@ void beltHMACStepA(const void* buf, size_t count, void* state)
 	// цикл по полным блокам
 	while (count >= 32)
 	{
-		beltBlockCopy(st->block, buf);
-		beltBlockCopy(st->block + 16, (const octet*)buf + 16);
+		memCopy(st->block, buf, 32);
 #if (OCTET_ORDER == BIG_ENDIAN)
 		beltBlockRevU32(st->block);
 		beltBlockRevU32(st->block + 16);

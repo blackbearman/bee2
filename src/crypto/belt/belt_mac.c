@@ -4,7 +4,7 @@
 \brief STB 34.101.31 (belt): MAC (message authentication)
 \project bee2 [cryptographic library]
 \created 2012.12.18
-\version 2020.03.24
+\version 2023.06.06
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -47,6 +47,7 @@ size_t beltMAC_keep()
 void beltMACStart(void* state, const octet key[], size_t len)
 {
 	belt_mac_st* st = (belt_mac_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsValid(state, beltMAC_keep()));
 	beltKeyExpand2(st->key, key, len);
 	beltBlockSetZero(st->s);
@@ -58,6 +59,7 @@ void beltMACStart(void* state, const octet key[], size_t len)
 void beltMACStepA(const void* buf, size_t count, void* state)
 {
 	belt_mac_st* st = (belt_mac_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint2(buf, count, state, beltMAC_keep()));
 	// накопить полный блок
 	if (st->filled < 16)
@@ -81,7 +83,7 @@ void beltMACStepA(const void* buf, size_t count, void* state)
 #endif
 		beltBlockXor2(st->s, st->block);
 		beltBlockEncr2(st->s, st->key);
-		beltBlockCopy(st->block, buf);
+		memCopy(st->block, buf, 16);
 		buf = (const octet*)buf + 16;
 		count -= 16;
 	}
@@ -101,6 +103,7 @@ void beltMACStepA(const void* buf, size_t count, void* state)
 static void beltMACStepG_internal(void* state)
 {
 	belt_mac_st* st = (belt_mac_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsValid(state, beltMAC_keep()));
 	// полный блок?
 	if (st->filled == 16)

@@ -4,7 +4,7 @@
 \brief STB 34.101.31 (belt): wide block encryption
 \project bee2 [cryptographic library]
 \created 2017.11.03
-\version 2023.06.03
+\version 2023.06.06
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -45,6 +45,7 @@ void beltWBLStart(void* state, const octet key[], size_t len)
 {
 	belt_wbl_st* st = (belt_wbl_st*)state;
 	ASSERT(memIsValid(state, beltWBL_keep()));
+	ASSERT(memIsAligned(state, O_PER_W));
 	beltKeyExpand2(st->key, key, len);
 	st->round = 0;
 }
@@ -60,13 +61,13 @@ void beltWBLStepEBase(void* buf, size_t count, void* state)
 	{
 		size_t i;
 		// block <- r1 + ... + r_{n-1}
-		beltBlockCopy(st->block, buf);
+		memCopy(st->block, buf, 16);
 		for (i = 16; i + 16 < count; i += 16)
-			beltBlockXor2(st->block, (octet*)buf + i);
+			memXor2(st->block, (octet*)buf + i, 16);
 		// r <- ShLo^128(r)
 		memMove(buf, (octet*)buf + 16, count - 16);
 		// r* <- block
-		beltBlockCopy((octet*)buf + count - 16, st->block);
+		memCopy((octet*)buf + count - 16, st->block, 16);
 		// block <- beltBlockEncr(block) + <round>
 		beltBlockEncr(st->block, st->key);
 		st->round++;
@@ -91,9 +92,9 @@ void beltWBLStepEOpt(void* buf, size_t count, void* state)
 	ASSERT(count >= 32 && count % 16 == 0);
 	ASSERT(memIsDisjoint2(buf, count, state, beltWBL_keep()));
 	// sum <- r1 + ... + r_{n-1}
-	beltBlockCopy(st->sum, buf);
+	memCopy(st->sum, buf, 16);
 	for (i = 16; i + 16 < count; i += 16)
-		beltBlockXor2(st->sum, (octet*)buf + i);
+		memXor2(st->sum, (octet*)buf + i, 16);
 	// 2 * n итераций 
 	ASSERT(st->round % (2 * n) == 0);
 	// sum будет записываться по смещению i: 
@@ -113,15 +114,15 @@ void beltWBLStepEOpt(void* buf, size_t count, void* state)
 		st->round = wordRev(st->round);
 #endif // OCTET_ORDER
 		// r* <- r* + block
-		beltBlockXor2((octet*)buf + (i + count - 16) % count, st->block);
+		memXor2((octet*)buf + (i + count - 16) % count, st->block, 16);
 		// запомнить sum
 		beltBlockCopy(st->block, st->sum);
 		// пересчитать sum: добавить новое слагаемое
-		beltBlockXor2(st->sum, (octet*)buf + (i + count - 16) % count);
+		memXor2(st->sum, (octet*)buf + (i + count - 16) % count, 16);
 		// пересчитать sum: исключить старое слагаемое
-		beltBlockXor2(st->sum, (octet*)buf + i);
+		memXor2(st->sum, (octet*)buf + i, 16);
 		// сохранить sum
-		beltBlockCopy((octet*)buf + i, st->block);
+		memCopy((octet*)buf + i, st->block, 16);
 		// вперед
 		i = (i + 16) % count;
 	}
@@ -138,11 +139,11 @@ void beltWBLStepDBase(void* buf, size_t count, void* state)
 	{
 		size_t i;
 		// block <- r*
-		beltBlockCopy(st->block, (octet*)buf + count - 16);
+		memCopy(st->block, (octet*)buf + count - 16, 16);
 		// r <- ShHi^128(r)
 		memMove((octet*)buf + 16, buf, count - 16);
 		// r1 <- block
-		beltBlockCopy(buf, st->block);
+		memCopy(buf, st->block, 16);
 		// block <- beltBlockEncr(block) + <round>
 		beltBlockEncr(st->block, st->key);
 #if (OCTET_ORDER == LITTLE_ENDIAN)
@@ -156,7 +157,7 @@ void beltWBLStepDBase(void* buf, size_t count, void* state)
 		memXor2((octet*)buf + count - 16, st->block, 16);
 		// r1 <- r1 + r2 + ... + r_{n-1}
 		for (i = 16; i + 16 < count; i += 16)
-			beltBlockXor2(buf, (octet*)buf + i);
+			memXor2(buf, (octet*)buf + i, 16);
 	}
 }
 
@@ -168,15 +169,15 @@ void beltWBLStepDOpt(void* buf, size_t count, void* state)
 	ASSERT(count >= 32 && count % 16 == 0);
 	ASSERT(memIsDisjoint2(buf, count, state, beltWBL_keep()));
 	// sum <- r1 + ... + r_{n-2} (будущая сумма r2 + ... + r_{n-1})
-	beltBlockCopy(st->sum, (octet*)buf);
+	memCopy(st->sum, (octet*)buf, 16);
 	for (i = 16; i + 32 < count; i += 16)
-		beltBlockXor2(st->sum, (octet*)buf + i);
+		memXor2(st->sum, (octet*)buf + i, 16);
 	// 2 * n итераций (sum будет записываться по смещению i: 
 	// это блок r* в начале такта и блок r1 в конце)
 	for (st->round = 2 * n, i = count - 16; st->round; --st->round)
 	{
 		// block <- beltBlockEncr(r*) + <round>
-		beltBlockCopy(st->block, (octet*)buf + i);
+		memCopy(st->block, (octet*)buf + i, 16);
 		beltBlockEncr(st->block, st->key);
 #if (OCTET_ORDER == LITTLE_ENDIAN)
 		memXor2(st->block, &st->round, O_PER_W);
@@ -186,13 +187,13 @@ void beltWBLStepDOpt(void* buf, size_t count, void* state)
 		st->round = wordRev(st->round);
 #endif // OCTET_ORDER
 		// r* <- r* + block
-		beltBlockXor2((octet*)buf + (i + count - 16) % count, st->block);
+		memXor2((octet*)buf + (i + count - 16) % count, st->block, 16);
 		// r1 <- pre r* + sum
-		beltBlockXor2((octet*)buf + i, st->sum);
+		memXor2((octet*)buf + i, st->sum, 16);
 		// пересчитать sum: исключить старое слагаемое
-		beltBlockXor2(st->sum, (octet*)buf + (i + count - 32) % count);
+		memXor2(st->sum, (octet*)buf + (i + count - 32) % count, 16);
 		// пересчитать sum: добавить новое слагаемое
-		beltBlockXor2(st->sum, (octet*)buf + i);
+		memXor2(st->sum, (octet*)buf + i, 16);
 		// назад
 		i = (i + count - 16) % count;
 	}
@@ -201,6 +202,7 @@ void beltWBLStepDOpt(void* buf, size_t count, void* state)
 void beltWBLStepE(void* buf, size_t count, void* state)
 {
 	belt_wbl_st* st = (belt_wbl_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsValid(state, beltWBL_keep()));
 	st->round = 0;
 	(count % 16 || count < 64) ? 
@@ -210,6 +212,7 @@ void beltWBLStepE(void* buf, size_t count, void* state)
 
 void beltWBLStepD(void* buf, size_t count, void* state)
 {
+	ASSERT(memIsAligned(state, O_PER_W));
 	(count % 16 || count < 80) ? 
 		beltWBLStepDBase(buf, count, state) :
 		beltWBLStepDOpt(buf, count, state);
@@ -217,6 +220,7 @@ void beltWBLStepD(void* buf, size_t count, void* state)
 
 void beltWBLStepD2(void* buf1, void* buf2, size_t count, void* state)
 {
+	ASSERT(memIsAligned(state, O_PER_W));
 	belt_wbl_st* st = (belt_wbl_st*)state;
 	word n = ((word)count + 15) / 16;
 	// pre
@@ -226,12 +230,12 @@ void beltWBLStepD2(void* buf1, void* buf2, size_t count, void* state)
 	{
 		size_t i;
 		// block <- r*
-		beltBlockCopy(st->block, buf2);
+		memCopy(st->block, buf2, 16);
 		// r <- ShHi^128(r)
 		memCopy(buf2, (octet*)buf1 + count - 32, 16);
 		memMove((octet*)buf1 + 16, buf1, count - 32);
 		// r1 <- block
-		beltBlockCopy(buf1, st->block);
+		memCopy(buf1, st->block, 16);
 		// block <- beltBlockEncr(block) + <round>
 		beltBlockEncr(st->block, st->key);
 #if (OCTET_ORDER == LITTLE_ENDIAN)
@@ -245,7 +249,7 @@ void beltWBLStepD2(void* buf1, void* buf2, size_t count, void* state)
 		memXor2(buf2, st->block, 16);
 		// r1 <- r1 + r2 + ... + r_{n-1}
 		for (i = 16; i + 32 < count; i += 16)
-			beltBlockXor2(buf1, (octet*)buf1 + i);
+			memXor2(buf1, (octet*)buf1 + i, 16);
 		ASSERT(i + 16 <= count && i + 32 >= count);
 		if (i + 16 < count)
 		{
