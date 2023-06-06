@@ -4,7 +4,7 @@
 \brief STB 34.101.66 (bake): authenticated key establishment (AKE) protocols
 \project bee2 [cryptographic library]
 \created 2014.04.14
-\version 2023.03.29
+\version 2023.06.06
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -1249,7 +1249,8 @@ err_t bakeBSTSRunB(octet key[32], const bign_params* params,
 	// раскладка блоба
 	in = (octet*)blob;
 	out = in + 512;
-	state = out + MAX2(params->l / 2, params->l / 4 + certb->len + 8);
+	state = (void*)memAlign(
+		out + MAX2(params->l / 2, params->l / 4 + certb->len + 8));
 	// старт
 	code = bakeBSTSStart(state, params, settings, privkeyb, certb);
 	ERR_CALL_HANDLE(code, blobClose(blob));
@@ -1338,7 +1339,7 @@ err_t bakeBSTSRunA(octet key[32], const bign_params* params,
 	// раскладка блоба
 	in = (octet*)blob;
 	out = in + MAX2(512, params->l / 2);
-	state = out + 3 * params->l / 4 + certa->len + 8;
+	state = (void*)memAlign(out + 3 * params->l / 4 + certa->len + 8);
 	// старт
 	code = bakeBSTSStart(state, params, settings, privkeya, certa);
 	ERR_CALL_HANDLE(code, blobClose(blob));
