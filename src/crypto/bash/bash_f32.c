@@ -4,7 +4,7 @@
 \brief STB 34.101.77 (bash): bash-f optimized for 32-bit platforms
 \project bee2 [cryptographic library]
 \created 2019.04.03
-\version 2021.03.25
+\version 2023.06.07
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -250,6 +250,7 @@ void bashF(octet block[192], void* stack)
 {
 	size_t i, j;
 	u32 (*s)[3][8][2] = (u32(*)[3][8][2])block;
+	ASSERT(memIsAligned(block, 4));
 	ASSERT(memIsDisjoint2(block, 192, stack, bashF_deep()));
 #if (OCTET_ORDER == BIG_ENDIAN)
 	u32Rev2((u32*)s, 48);

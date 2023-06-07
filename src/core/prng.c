@@ -4,7 +4,7 @@
 \brief Pseudorandom number generators
 \project bee2 [cryptographic library]
 \created 2014.05.02
-\version 2016.07.15
+\version 2023.06.07
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -59,6 +59,7 @@ size_t prngCOMBO_keep()
 void prngCOMBOStart(void* state, u32 seed)
 {
 	prng_combo_st* s = (prng_combo_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsValid(s, sizeof(*s)));
 	s->x = 0xF8B7BB93;
 	s->y = 0xBEE3B54B;
@@ -71,6 +72,7 @@ void prngCOMBOStart(void* state, u32 seed)
 void prngCOMBOStepR(void* buf, size_t count, void* state)
 {
 	prng_combo_st* s = (prng_combo_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsValid(buf, count));
 	ASSERT(memIsValid(s, sizeof(*s)));
 	// есть резерв?
@@ -125,6 +127,7 @@ size_t prngEcho_keep()
 void prngEchoStart(void* state, const void* seed, size_t seed_len)
 {
 	prng_echo_st* s = (prng_echo_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsValid(s, sizeof(prng_echo_st)));
 	ASSERT(seed_len > 0);
 	ASSERT(memIsValid(seed, seed_len));
@@ -137,6 +140,7 @@ void prngEchoStart(void* state, const void* seed, size_t seed_len)
 void prngEchoStepR(void* buf, size_t count, void* state)
 {
 	prng_echo_st* s = (prng_echo_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsValid(s, sizeof(prng_echo_st)));
 	ASSERT(memIsValid(s->seed, s->seed_len));
 	ASSERT(memIsValid(buf, count));
@@ -196,6 +200,7 @@ void prngSTBStart(void* state, const u16 z[31])
 	prng_stb_st* s = (prng_stb_st*)state;
 	size_t i;
 	// pre
+	ASSERT(memIsAligned(s, O_PER_W));
 	ASSERT(memIsValid(s, sizeof(prng_stb_st)));
 	ASSERT(memIsNullOrValid(z, 2 * 31));
 	// загрузить z

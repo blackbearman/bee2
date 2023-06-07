@@ -4,7 +4,7 @@
 \brief STB 34.101.31 (belt): KRP (keyrep = key diversification + meshing)
 \project bee2 [cryptographic library]
 \created 2012.12.18
-\version 2020.03.24
+\version 2023.06.07
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -41,6 +41,7 @@ void beltKRPStart(void* state, const octet key[], size_t len,
 	const octet level[12])
 {
 	belt_krp_st* st = (belt_krp_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint2(level, 12, state, beltKRP_keep()));
 	// block <- ... || level || ...
 	u32From(st->block + 1, level, 12);

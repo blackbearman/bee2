@@ -4,7 +4,7 @@
 \brief Compound objects
 \project bee2 [cryptographic library]
 \created 2014.04.14
-\version 2015.05.22
+\version 2023.06.07
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -81,6 +81,7 @@ void objCopy(void* dest, const void* src)
 {
 	ASSERT(objIsOperable(src));
 	ASSERT(memIsValid(dest, objKeep(src)));
+	ASSERT(memIsAligned(dest, O_PER_W));
 	// скопировать данные
 	memMove(dest, src, objKeep(src));
 	// сдвинуть указатели

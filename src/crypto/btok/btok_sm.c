@@ -4,7 +4,7 @@
 \brief STB 34.101.79 (btok): Secure Messaging
 \project bee2 [cryptographic library]
 \created 2022.10.31
-\version 2023.03.20
+\version 2023.06.07
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -47,6 +47,7 @@ void btokSMStart(void* state, const octet key[32])
 {
 	btok_sm_st* st = (btok_sm_st*)state;
 	// pre
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint2(key, 32, state, btokSM_keep()));
 	// key_i <- belt-keyrep(key, 0, <i>, 32);
 	memSetZero(st->ctr, 16);

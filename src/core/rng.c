@@ -4,7 +4,7 @@
 \brief Entropy sources and random number generators
 \project bee2 [cryptographic library]
 \created 2014.10.13
-\version 2023.03.23
+\version 2023.06.07
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -38,6 +38,7 @@ bool_t rngTestFIPS1(const octet buf[2500])
 	size_t s = 0;
 	size_t count = W_OF_O(2500);
 	ASSERT(memIsValid(buf, 2500));
+	ASSERT(memIsAligned(buf, O_PER_W));
 	if (O_OF_W(count) > 2500)
 	{
 		ASSERT(B_PER_W == 64);

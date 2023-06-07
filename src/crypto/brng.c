@@ -4,7 +4,7 @@
 \brief STB 34.101.47 (brng): algorithms of pseudorandom number generation
 \project bee2 [cryptographic library]
 \created 2013.01.31
-\version 2018.07.09
+\version 2023.06.07
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -82,6 +82,7 @@ size_t brngCTR_keep()
 void brngCTRStart(void* state, const octet key[32], const octet iv[32])
 {
 	brng_ctr_st* s = (brng_ctr_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint2(s, brngCTR_keep(), key, 32));
 	ASSERT(iv == 0 || memIsDisjoint2(s, brngCTR_keep(), iv, 32));
 	// обработать key
@@ -101,6 +102,8 @@ void brngCTRStart(void* state, const octet key[32], const octet iv[32])
 void brngCTRStepR(void* buf, size_t count, void* state)
 {
 	brng_ctr_st* s = (brng_ctr_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
+	ASSERT(memIsAligned(buf, O_PER_W));
 	ASSERT(memIsDisjoint2(buf, count, s, brngCTR_keep()));
 	// есть резерв данных?
 	if (s->reserved)
@@ -154,6 +157,7 @@ void brngCTRStepR(void* buf, size_t count, void* state)
 void brngCTRStepG(octet iv[32], void* state)
 {
 	brng_ctr_st* s = (brng_ctr_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint2(s, brngCTR_keep(), iv, 32));
 	memCopy(iv, s->s, 32);
 }
