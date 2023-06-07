@@ -4,7 +4,7 @@
 \brief STB 34.101.31 (belt): PBKDF (password-based key derivation)
 \project bee2 [cryptographic library]
 \created 2012.12.18
-\version 2017.09.28
+\version 2023.06.07
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -40,7 +40,8 @@ err_t beltPBKDF2(octet key[32], const octet pwd[], size_t pwd_len,
 	// key <- HMAC(pwd, salt || 00000001)
 	beltHMACStart(state, pwd, pwd_len);
 	beltHMACStepA(salt, salt_len, state);
-	*(u32*)key = 0, key[3] = 1;
+	memSet(key, 0, 4);
+	key[3] = 1;
 	beltHMACStepA(key, 4, state);
 	beltHMACStepG(key, state);
 	// пересчитать key
