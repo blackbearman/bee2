@@ -26,11 +26,11 @@
 
 bool_t apduTest()
 {
-	octet stack[2048+O_PER_W];
-	apdu_cmd_t* cmd = (apdu_cmd_t*)memAlign(stack);
-	apdu_cmd_t* cmd1 = (apdu_cmd_t*)memAlign(stack + 1024);
-	apdu_resp_t* resp = (apdu_resp_t*)memAlign(stack);
-	apdu_resp_t* resp1 = (apdu_resp_t*)memAlign(stack + 1024);
+	word stack[W_OF_O(2048)];
+	apdu_cmd_t* cmd = (apdu_cmd_t*)stack;
+	apdu_cmd_t* cmd1 = (apdu_cmd_t*)(stack + W_OF_O(1024));
+	apdu_resp_t* resp = (apdu_resp_t*)stack;
+	apdu_resp_t* resp1 = (apdu_resp_t*)(stack + W_OF_O(1024));
 	octet apdu[1024];
 	size_t count;
 	size_t count1;

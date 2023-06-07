@@ -11,6 +11,7 @@
 */
 
 #include <bee2/core/hex.h>
+#include <bee2/core/mem.h>
 #include <bee2/core/str.h>
 #include <bee2/core/util.h>
 #include <bee2/core/word.h>
@@ -33,6 +34,7 @@ bool_t wordsTest()
 	octet* buf1 = (octet*)memBuf + 16;
 	octet* buf2 = (octet*)memBuf + 32;
 	// neg
+	hexTo(buf1, "F0F1F2F3F4F5F6F7F8");
 	memCopy(buf2, buf1, n);
 	memNeg(buf1, n);
 	wordsNeg(buf2, n);
