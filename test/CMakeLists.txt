@@ -17,6 +17,7 @@ add_executable(testbee2
 	core/u32_test.c
 	core/u64_test.c
 	core/util_test.c
+	core/words_test.c
 	crypto/bake_test.c
 	crypto/bash_bench.c
 	crypto/bash_test.c
