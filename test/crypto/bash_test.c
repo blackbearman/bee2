@@ -4,7 +4,7 @@
 \brief Tests for STB 34.101.77 (bash)
 \project bee2/test
 \created 2015.09.22
-\version 2023.03.30
+\version 2023.06.07
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -27,7 +27,8 @@
 
 bool_t bashTest()
 {
-	octet buf[192];
+	word memBuf[W_OF_O(192)];
+	octet* buf = (octet*)memBuf;
 	octet hash[64];
 	octet state[1024];
 	octet state1[1024];

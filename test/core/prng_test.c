@@ -4,7 +4,7 @@
 \brief Tests for pseudorandom number generators
 \project bee2/test
 \created 2014.06.30
-\version 2023.03.29
+\version 2023.06.07
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -24,7 +24,7 @@
 bool_t prngTest()
 {
 	octet buf[128];
-	char state[256];
+	word state[W_OF_O(256)];
 	// подготовить память
 	if (sizeof(state) < prngSTB_keep())
 		return FALSE;

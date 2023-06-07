@@ -4,7 +4,7 @@
 \brief Tests for compound objects
 \project bee2/test
 \created 2013.04.16
-\version 2023.03.30
+\version 2023.06.07
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -39,7 +39,7 @@ struct obj_test2_t
 
 bool_t objTest()
 {
-	octet buf[1024];
+	word buf[W_OF_O(1024)];
 	struct obj_test1_t obj1[1];
 	struct obj_test2_t obj2[1];
 	void* t;

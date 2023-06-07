@@ -4,7 +4,7 @@
 \brief Tests for APDU formats
 \project bee2/test
 \created 2022.10.31
-\version 2023.03.30
+\version 2023.06.07
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -26,11 +26,11 @@
 
 bool_t apduTest()
 {
-	octet stack[2048];
-	apdu_cmd_t* cmd = (apdu_cmd_t*)stack;
-	apdu_cmd_t* cmd1 = (apdu_cmd_t*)(stack + 1024);
-	apdu_resp_t* resp = (apdu_resp_t*)stack;
-	apdu_resp_t* resp1 = (apdu_resp_t*)(stack + 1024);
+	octet stack[2048+O_PER_W];
+	apdu_cmd_t* cmd = (apdu_cmd_t*)memAlign(stack);
+	apdu_cmd_t* cmd1 = (apdu_cmd_t*)memAlign(stack + 1024);
+	apdu_resp_t* resp = (apdu_resp_t*)memAlign(stack);
+	apdu_resp_t* resp1 = (apdu_resp_t*)memAlign(stack + 1024);
 	octet apdu[1024];
 	size_t count;
 	size_t count1;

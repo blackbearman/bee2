@@ -4,7 +4,7 @@
 \brief Benchmarks for STB 34.101.77 (bash)
 \project bee2/test
 \created 2014.07.15
-\version 2023.03.30
+\version 2023.06.07
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -29,9 +29,9 @@ extern const char bash_platform[];
 
 bool_t bashBench()
 {
-	octet belt_state[256];
+	word belt_state[W_OF_O(256)];
 	octet bash_state[1024];
-	octet combo_state[256];
+	word combo_state[W_OF_O(256)];
 	octet buf[1024];
 	octet hash[64];
 	size_t l, d;

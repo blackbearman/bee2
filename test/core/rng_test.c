@@ -4,7 +4,7 @@
 \brief Tests for random number generators
 \project bee2/test
 \created 2014.10.10
-\version 2022.10.21
+\version 2023.06.07
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -26,7 +26,8 @@
 bool_t rngTest()
 {
 	const char* sources[] = { "trng", "trng2", "sys", "timer" };
-	octet buf[2500];
+	word memBuf[W_OF_O(2500)];
+	octet* buf = (octet*)memBuf;
 	char hex[33];
 	size_t read;
 	size_t pos;

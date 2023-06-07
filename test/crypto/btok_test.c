@@ -4,7 +4,7 @@
 \brief Tests for STB 34.101.79 (btok)
 \project bee2/test
 \created 2022.07.07
-\version 2023.03.29
+\version 2023.06.07
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -104,7 +104,7 @@ CV-сертификаты
 
 static bool_t btokCVCTest()
 {
-	octet echo[256];
+	word echo[W_OF_O(256)];
 	btok_cvc_t cvc0[1];
 	btok_cvc_t cvc1[1];
 	btok_cvc_t cvc2[1];
@@ -245,7 +245,7 @@ SM
 
 static bool_t btokSMTest()
 {
-	octet state_t[512];
+	word state_t[W_OF_O(512)];
 	octet state_ct[512];
 	octet stack[4096];
 	apdu_cmd_t* cmd = (apdu_cmd_t*)stack;
@@ -424,8 +424,8 @@ static err_t bakeTestCertVal(octet* pubkey, const bign_params* params,
 bool_t btokBAUTHTest() 
 {
 	bign_params params[1];
-	octet echoa[64];
-	octet echob[64];
+	word echoa[W_OF_O(64)];
+	word echob[W_OF_O(64)];
 	bake_settings settingsa[1];
 	bake_settings settingsb[1];
 	octet da[32];
