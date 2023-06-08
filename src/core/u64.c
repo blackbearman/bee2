@@ -165,7 +165,6 @@ void u64To(void* dest, size_t count, const u64 src[])
 {
 	ASSERT(memIsValid(src, (count + 7) / 8 * 8));
 	ASSERT(memIsValid(dest, count));
-	memMove(dest, src, count);
 #if (OCTET_ORDER == BIG_ENDIAN)
 	if (count % 8)
 	{
@@ -174,7 +173,11 @@ void u64To(void* dest, size_t count, const u64 src[])
 		for (t *= 8; t < count; ++t, u >>= 8)
 			((octet*)dest)[t] = (octet)u;
 	}
-	for (count /= 8; count--;)
-		((u64*)dest)[count] = u64Rev(((u64*)dest)[count]);
+	for (count /= 8; count--;) {
+		u64 u = u64Rev(src[count]);
+		memCopy(dest + count * 8, &u, 8); 
+	}
+#else
+	memMove(dest, src, count);
 #endif // OCTET_ORDER
 }

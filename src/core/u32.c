@@ -226,7 +226,6 @@ void u32To(void* dest, size_t count, const u32 src[])
 {
 	ASSERT(memIsValid(src, (count + 3) / 4 * 4));
 	ASSERT(memIsValid(dest, count));
-	memMove(dest, src, count);
 #if (OCTET_ORDER == BIG_ENDIAN)
 	if (count % 4)
 	{
@@ -235,7 +234,11 @@ void u32To(void* dest, size_t count, const u32 src[])
 		for (t *= 4; t < count; ++t, u >>= 8)
 			((octet*)dest)[t] = (octet)u;
 	}
-	for (count /= 4; count--;)
-		((u32*)dest)[count] = u32Rev(((u32*)dest)[count]);
+	for (count /= 4; count--;) {
+		u32 u = u32Rev(src[count]);
+		memCopy(dest + count * 4, &u, 4); 
+	}
+#else
+	memMove(dest, src, count);
 #endif // OCTET_ORDER
 }
