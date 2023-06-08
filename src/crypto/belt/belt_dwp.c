@@ -4,7 +4,7 @@
 \brief STB 34.101.31 (belt): DWP (datawrap = data encryption + authentication)
 \project bee2 [cryptographic library]
 \created 2012.12.18
-\version 2020.03.24
+\version 2023.06.08
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -45,6 +45,7 @@ void beltDWPStart(void* state, const octet key[], size_t len,
 	const octet iv[16])
 {
 	belt_dwp_st* st = (belt_dwp_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint2(iv, 16, state, beltDWP_keep()));
 	// настроить CTR
 	beltCTRStart(st->ctr, key, len, iv);
@@ -69,6 +70,7 @@ void beltDWPStepE(void* buf, size_t count, void* state)
 void beltDWPStepI(const void* buf, size_t count, void* state)
 {
 	belt_dwp_st* st = (belt_dwp_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint2(buf, count, state, beltDWP_keep()));
 	// критические данные не обрабатывались?
 	ASSERT(count == 0 || beltHalfBlockIsZero(st->len + W_OF_B(64)));
@@ -96,7 +98,7 @@ void beltDWPStepI(const void* buf, size_t count, void* state)
 	// цикл по полным блокам
 	while (count >= 16)
 	{
-		beltBlockCopy(st->block, buf);
+		memCopy(st->block, buf, 16);
 #if (OCTET_ORDER == BIG_ENDIAN)
 		beltBlockRevW(st->block);
 #endif
@@ -113,6 +115,7 @@ void beltDWPStepI(const void* buf, size_t count, void* state)
 void beltDWPStepA(const void* buf, size_t count, void* state)
 {
 	belt_dwp_st* st = (belt_dwp_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint2(buf, count, state, beltDWP_keep()));
 	// первый непустой фрагмент критических данных?
 	// есть необработанные открытые данные?
@@ -150,7 +153,7 @@ void beltDWPStepA(const void* buf, size_t count, void* state)
 	// цикл по полным блокам
 	while (count >= 16)
 	{
-		beltBlockCopy(st->block, buf);
+		memCopy(st->block, buf, 16);
 #if (OCTET_ORDER == BIG_ENDIAN)
 		beltBlockRevW(st->block);
 #endif

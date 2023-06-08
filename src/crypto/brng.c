@@ -214,6 +214,7 @@ void brngHMACStart(void* state, const octet key[], size_t key_len,
 	const octet iv[], size_t iv_len)
 {
 	brng_hmac_st* s = (brng_hmac_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint2(s, brngHMAC_keep(), key, key_len));
 	ASSERT(memIsDisjoint2(s, brngHMAC_keep(), iv, iv_len));
 	// запомнить iv

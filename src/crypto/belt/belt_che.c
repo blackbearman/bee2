@@ -4,7 +4,7 @@
 \brief STB 34.101.31 (belt): CHE (Ctr-Hash-Encrypt) authenticated encryption
 \project bee2 [cryptographic library]
 \created 2020.03.20
-\version 2020.07.31
+\version 2023.06.08
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -48,10 +48,11 @@ void beltCHEStart(void* state, const octet key[], size_t len,
 	const octet iv[16])
 {
 	belt_che_st* st = (belt_che_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint2(iv, 16, state, beltCHE_keep()));
 	// разобрать key и iv
 	beltKeyExpand2(st->key, key, len);
-	beltBlockCopy(st->r, iv);
+	memCopy(st->r, iv, 16);
 	beltBlockEncr((octet*)st->r, st->key);
 	u32From(st->s, st->r, 16);
 #if (OCTET_ORDER == BIG_ENDIAN)
@@ -68,6 +69,7 @@ void beltCHEStart(void* state, const octet key[], size_t len,
 void beltCHEStepE(void* buf, size_t count, void* state)
 {
 	belt_che_st* st = (belt_che_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint2(buf, count, state, beltCHE_keep()));
 	// есть резерв гаммы?
 	if (st->reserved)
@@ -92,7 +94,7 @@ void beltCHEStepE(void* buf, size_t count, void* state)
 #if (OCTET_ORDER == BIG_ENDIAN)
 		beltBlockRevU32(st->block1);
 #endif
-		beltBlockXor2(buf, st->block1);
+		memXor2(buf, st->block1, 16);
 		buf = (octet*)buf + 16;
 		count -= 16;
 	}
@@ -113,6 +115,7 @@ void beltCHEStepE(void* buf, size_t count, void* state)
 void beltCHEStepI(const void* buf, size_t count, void* state)
 {
 	belt_che_st* st = (belt_che_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint2(buf, count, state, beltCHE_keep()));
 	// критические данные не обрабатывались?
 	ASSERT(count == 0 || beltHalfBlockIsZero(st->len + W_OF_B(64)));
@@ -140,7 +143,7 @@ void beltCHEStepI(const void* buf, size_t count, void* state)
 	// цикл по полным блокам
 	while (count >= 16)
 	{
-		beltBlockCopy(st->block, buf);
+		memCopy(st->block, buf, 16);
 #if (OCTET_ORDER == BIG_ENDIAN)
 		beltBlockRevW(st->block);
 #endif
@@ -157,6 +160,7 @@ void beltCHEStepI(const void* buf, size_t count, void* state)
 void beltCHEStepA(const void* buf, size_t count, void* state)
 {
 	belt_che_st* st = (belt_che_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint2(buf, count, state, beltCHE_keep()));
 	// первый непустой фрагмент критических данных?
 	// есть необработанные открытые данные?
@@ -194,7 +198,7 @@ void beltCHEStepA(const void* buf, size_t count, void* state)
 	// цикл по полным блокам
 	while (count >= 16)
 	{
-		beltBlockCopy(st->block, buf);
+		memCopy(st->block, buf, 16);
 #if (OCTET_ORDER == BIG_ENDIAN)
 		beltBlockRevW(st->block);
 #endif
@@ -239,6 +243,7 @@ static void beltCHEStepG_internal(void* state)
 void beltCHEStepG(octet mac[8], void* state)
 {
 	belt_che_st* st = (belt_che_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsValid(mac, 8));
 	beltCHEStepG_internal(state);
 	memCopy(mac, st->t1, 8);
@@ -247,6 +252,7 @@ void beltCHEStepG(octet mac[8], void* state)
 bool_t beltCHEStepV(const octet mac[8], void* state)
 {
 	belt_che_st* st = (belt_che_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsValid(mac, 8));
 	beltCHEStepG_internal(state);
 	return memEq(mac, st->t1, 8);

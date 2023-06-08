@@ -116,10 +116,11 @@ err_t bakeSWU(octet pt[], const bign_params* params, const octet msg[])
 {
 	err_t code;
 	void* state;
-	word* W;
+	word W[W_OF_O(64)];
 	// проверить входные данные
 	if (!memIsValid(params, sizeof(bign_params)))
 		return ERR_BAD_INPUT;
+	ASSERT(memIsAligned(params, O_PER_W));
 	if (params->l != 128 && params->l != 192 && params->l != 256)
 		return ERR_BAD_PARAMS;
 	if (!memIsValid(msg, params->l / 4) ||
@@ -133,7 +134,7 @@ err_t bakeSWU(octet pt[], const bign_params* params, const octet msg[])
 	code = bignStart(state, params);
 	ERR_CALL_HANDLE(code, blobClose(state));
 	// основные действия
-	W = (word*)pt;
+	memCopy(W, pt, sizeof(W));
 	bakeSWU2(W, (const ec_o*)state, msg, objEnd(state, void));
 	wwTo(pt, params->l / 2, W);
 	// завершение
