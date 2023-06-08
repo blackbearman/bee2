@@ -4,7 +4,7 @@
 \brief Tests for Draft of RD_RB (pfok)
 \project bee2/test
 \created 2014.07.08
-\version 2022.06.07
+\version 2023.06.08
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -94,7 +94,7 @@ bool_t pfokTestStdParams()
 bool_t pfokTest()
 {
 	pfok_params params[1];
-	octet combo_state[128];
+	word combo_state[W_OF_O(128)];
 	octet ua[O_OF_B(130)];
 	octet xa[O_OF_B(130)];
 	octet vb[O_OF_B(638)];

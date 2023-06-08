@@ -4,7 +4,7 @@
 \brief Tests for STB 34.101.31 (belt)
 \project bee2/test
 \created 2012.06.20
-\version 2023.06.07
+\version 2023.06.08
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -122,9 +122,10 @@ static bool_t beltZerosumTest()
 
 bool_t beltTest()
 {
-	octet memBuf[128 + 1024 + O_PER_W];
-	octet* buf = (octet*)memAlign(memBuf);
-	octet* state = buf + 128;
+	word memBuf1[W_OF_O(128)];
+	word memBuf2[W_OF_O(1024)];
+	octet* buf = (octet*)memBuf1;
+	octet* state = (octet*)memBuf2;
 	octet buf1[128];
 	octet mac[8];
 	octet mac1[8];
@@ -135,7 +136,7 @@ bool_t beltTest()
 	octet level[12];
 	size_t count;
 	// подготовить память
-	if (sizeof(memBuf) - 128 < utilMax(17,
+	if (sizeof(memBuf2) < utilMax(17,
 		256,
 		beltWBL_keep(),
 		beltCompr_deep(),

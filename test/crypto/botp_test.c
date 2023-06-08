@@ -4,7 +4,7 @@
 \brief Tests for STB 34.101.47/botp
 \project bee2/test
 \created 2015.11.06
-\version 2023.03.29
+\version 2023.06.08
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -35,7 +35,7 @@ bool_t botpTest()
 	char p_str[72];
 	char s_str[136];
 	tm_time_t t;
-	octet state[2048];
+	word state[W_OF_O(2048)];
 	// подготовить память
 	if (sizeof(state) < utilMax(3,
 		botpHOTP_keep(),
