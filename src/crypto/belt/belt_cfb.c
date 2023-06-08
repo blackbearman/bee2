@@ -4,7 +4,7 @@
 \brief STB 34.101.31 (belt): CFB encryption
 \project bee2 [cryptographic library]
 \created 2012.12.18
-\version 2023.06.06
+\version 2023.06.08
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -41,7 +41,7 @@ void beltCFBStart(void* state, const octet key[], size_t len,
 	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint2(iv, 16, state, beltCFB_keep()));
 	beltKeyExpand2(st->key, key, len);
-	beltBlockCopy(st->block, iv);
+	memCopy(st->block, iv, 16);
 	st->reserved = 0;
 }
 

@@ -4,7 +4,7 @@
 \brief STB 34.101.31 (belt): CBC encryption
 \project bee2 [cryptographic library]
 \created 2012.12.18
-\version 2020.03.24
+\version 2023.06.08
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -38,15 +38,17 @@ void beltCBCStart(void* state, const octet key[], size_t len,
 	const octet iv[16])
 {
 	belt_cbc_st* st = (belt_cbc_st*)state;
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint2(iv, 16, state, beltCBC_keep()));
 	beltKeyExpand2(st->key, key, len);
-	beltBlockCopy(st->block, iv);
+	memCopy(st->block, iv, 16);
 }
 
 void beltCBCStepE(void* buf, size_t count, void* state)
 {
 	belt_cbc_st* st = (belt_cbc_st*)state;
 	ASSERT(count >= 16);
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint2(buf, count, state, beltCBC_keep()));
 	// цикл по полным блокам
 	while(count >= 16)
@@ -70,6 +72,7 @@ void beltCBCStepD(void* buf, size_t count, void* state)
 {
 	belt_cbc_st* st = (belt_cbc_st*)state;
 	ASSERT(count >= 16);
+	ASSERT(memIsAligned(state, O_PER_W));
 	ASSERT(memIsDisjoint2(buf, count, state, beltCBC_keep()));
 	// цикл по полным блокам
 	while(count >= 32 || count == 16)

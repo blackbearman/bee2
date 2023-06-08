@@ -4,7 +4,7 @@
 \brief STB 34.101.31 (belt): HMAC message authentication
 \project bee2 [cryptographic library]
 \created 2012.12.18
-\version 2023.06.06
+\version 2023.06.08
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -66,8 +66,7 @@ void beltHMACStart(void* state, const octet key[], size_t len)
 		u32From(st->h_in, beltH(), 32);
 		while (len >= 32)
 		{
-			beltBlockCopy(st->block, key);
-			beltBlockCopy(st->block + 16, key + 16);
+			memCopy(st->block, key, 32);
 #if (OCTET_ORDER == BIG_ENDIAN)
 			beltBlockRevU32(st->block);
 			beltBlockRevU32(st->block + 16);
