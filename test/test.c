@@ -4,7 +4,7 @@
 \brief Bee2 testing
 \project bee2/test
 \created 2014.04.02
-\version 2023.03.21
+\version 2023.12.19
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -72,6 +72,7 @@ int testCore()
 extern bool_t wordTest();
 extern bool_t wwTest();
 extern bool_t zzTest();
+extern bool_t ppTest();
 extern bool_t priTest();
 extern bool_t ecpTest();
 extern bool_t ecpBench();
@@ -83,6 +84,7 @@ int testMath()
 	printf("wordTest: %s\n", (code = wordTest()) ? "OK" : "Err"), ret |= !code;
 	printf("wwTest: %s\n", (code = wwTest()) ? "OK" : "Err"), ret |= !code;
 	printf("zzTest: %s\n", (code = zzTest()) ? "OK" : "Err"), ret |= !code;
+	printf("ppTest: %s\n", (code = ppTest()) ? "OK" : "Err"), ret |= !code;
 	printf("priTest: %s\n", (code = priTest()) ? "OK" : "Err"), ret |= !code;
 	printf("ecpTest: %s\n", (code = ecpTest()) ? "OK" : "Err"), ret |= !code;
 	code = ecpBench(), ret |= !code;
@@ -98,6 +100,7 @@ int testMath()
 extern bool_t beltTest();
 extern bool_t beltBench();
 extern bool_t bignTest();
+extern bool_t bign96Test();
 extern bool_t brngTest();
 extern bool_t belsTest();
 extern bool_t bakeTest();
@@ -110,7 +113,8 @@ extern bool_t btokTest();
 extern bool_t dstuTest();
 extern bool_t g12sTest();
 extern bool_t pfokTest();
-extern bool_t pfokTestStdParams();
+extern bool_t pfokTestParamsStd();
+extern bool_t stb99Test();
 
 int testCrypto()
 {
@@ -121,6 +125,8 @@ int testCrypto()
 	code = beltBench(), ret |= !code;
 	code = bashBench(), ret |= !code;
 	printf("bignTest: %s\n", (code = bignTest()) ? "OK" : "Err"), ret |= !code;
+	printf("bign96Test: %s\n", (code = bign96Test()) ? "OK" : "Err"),
+		ret |= !code;
 	printf("botpTest: %s\n", (code = botpTest()) ? "OK" : "Err"), ret |= !code;
 	printf("brngTest: %s\n", (code = brngTest()) ? "OK" : "Err"), ret |= !code;
 	printf("belsTest: %s\n", (code = belsTest()) ? "OK" : "Err"), ret |= !code;
@@ -130,6 +136,8 @@ int testCrypto()
 	printf("dstuTest: %s\n", (code = dstuTest()) ? "OK" : "Err"), ret |= !code;
 	printf("g12sTest: %s\n", (code = g12sTest()) ? "OK" : "Err"), ret |= !code;
 	printf("pfokTest: %s\n", (code = pfokTest()) ? "OK" : "Err"), ret |= !code;
+	printf("stb99Test: %s\n", (code = stb99Test()) ? "OK" : "Err"),
+		ret |= !code;
 	return ret;
 }
 

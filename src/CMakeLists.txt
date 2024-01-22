@@ -43,7 +43,13 @@ set(src
   crypto/belt/belt_kwp.c
   crypto/belt/belt_mac.c
   crypto/belt/belt_pbkdf.c
-  crypto/bign.c
+  crypto/bign/bign_ibs.c
+  crypto/bign/bign_keyt.c
+  crypto/bign/bign_lcl.c
+  crypto/bign/bign_misc.c
+  crypto/bign/bign_params.c
+  crypto/bign/bign_sign.c
+  crypto/bign96.c
   crypto/bpki.c
   crypto/botp.c
   crypto/brng.c
@@ -53,13 +59,18 @@ set(src
   crypto/btok/btok_sm.c
   crypto/dstu.c
   crypto/g12s.c
+  crypto/stb99.c
   crypto/pfok.c
   math/ec.c
   math/ec2.c
   math/ecp.c
   math/gf2.c
   math/gfp.c
-  math/pp.c
+  math/pp/pp_etc.c
+  math/pp/pp_gcd.c
+  math/pp/pp_mod.c
+  math/pp/pp_mul.c
+  math/pp/pp_red.c
   math/pri.c
   math/qr.c
   math/ww.c
@@ -103,9 +114,9 @@ if(BUILD_SHARED_LIBS)
 
   target_link_libraries(bee2 ${libs})
 
-set_target_properties(bee2 PROPERTIES 
-  VERSION ${BEE2_VERSION_MAJOR}.${BEE2_VERSION_MINOR}.${BEE2_VERSION_PATCH}
-  SOVERSION 2.0)
+  set_target_properties(bee2 PROPERTIES 
+    VERSION ${BEE2_VERSION_MAJOR}.${BEE2_VERSION_MINOR}.${BEE2_VERSION_PATCH}
+    SOVERSION 2.0)
 
   install(TARGETS bee2
     DESTINATION ${LIB_INSTALL_DIR}

@@ -394,6 +394,13 @@
     <ClCompile Include="..\..\src\crypto\belt\belt_pbkdf.c" />
     <ClCompile Include="..\..\src\crypto\belt\belt_sde.c" />
     <ClCompile Include="..\..\src\crypto\belt\belt_wbl.c" />
+    <ClCompile Include="..\..\src\crypto\bign96.c" />
+    <ClCompile Include="..\..\src\crypto\bign\bign_ibs.c" />
+    <ClCompile Include="..\..\src\crypto\bign\bign_keyt.c" />
+    <ClCompile Include="..\..\src\crypto\bign\bign_lcl.c" />
+    <ClCompile Include="..\..\src\crypto\bign\bign_misc.c" />
+    <ClCompile Include="..\..\src\crypto\bign\bign_params.c" />
+    <ClCompile Include="..\..\src\crypto\bign\bign_sign.c" />
     <ClCompile Include="..\..\src\crypto\botp.c" />
     <ClCompile Include="..\..\src\crypto\bpki.c" />
     <ClCompile Include="..\..\src\crypto\btok\btok_bauth.c" />
@@ -402,18 +409,22 @@
     <ClCompile Include="..\..\src\crypto\btok\btok_sm.c" />
     <ClCompile Include="..\..\src\crypto\g12s.c" />
     <ClCompile Include="..\..\src\crypto\pfok.c" />
+    <ClCompile Include="..\..\src\crypto\stb99.c" />
     <ClCompile Include="..\..\src\math\ec.c" />
     <ClCompile Include="..\..\src\math\ec2.c" />
     <ClCompile Include="..\..\src\math\ecp.c" />
     <ClCompile Include="..\..\src\math\gf2.c" />
     <ClCompile Include="..\..\src\math\gfp.c" />
-    <ClCompile Include="..\..\src\math\pp.c" />
+    <ClCompile Include="..\..\src\math\pp\pp_etc.c" />
+    <ClCompile Include="..\..\src\math\pp\pp_gcd.c" />
+    <ClCompile Include="..\..\src\math\pp\pp_mod.c" />
+    <ClCompile Include="..\..\src\math\pp\pp_mul.c" />
+    <ClCompile Include="..\..\src\math\pp\pp_red.c" />
     <ClCompile Include="..\..\src\math\pri.c" />
     <ClCompile Include="..\..\src\math\qr.c" />
     <ClCompile Include="..\..\src\math\ww.c" />
     <ClCompile Include="..\..\src\math\zm.c" />
     <ClCompile Include="..\..\src\crypto\bels.c" />
-    <ClCompile Include="..\..\src\crypto\bign.c" />
     <ClCompile Include="..\..\src\crypto\brng.c" />
     <ClCompile Include="..\..\src\crypto\dstu.c" />
     <ClCompile Include="..\..\src\math\zz\zz_add.c" />
@@ -452,6 +463,7 @@
     <ClInclude Include="..\..\include\bee2\crypto\bels.h" />
     <ClInclude Include="..\..\include\bee2\crypto\belt.h" />
     <ClInclude Include="..\..\include\bee2\crypto\bign.h" />
+    <ClInclude Include="..\..\include\bee2\crypto\bign96.h" />
     <ClInclude Include="..\..\include\bee2\crypto\botp.h" />
     <ClInclude Include="..\..\include\bee2\crypto\bpki.h" />
     <ClInclude Include="..\..\include\bee2\crypto\brng.h" />
@@ -459,6 +471,7 @@
     <ClInclude Include="..\..\include\bee2\crypto\dstu.h" />
     <ClInclude Include="..\..\include\bee2\crypto\g12s.h" />
     <ClInclude Include="..\..\include\bee2\crypto\pfok.h" />
+    <ClInclude Include="..\..\include\bee2\crypto\stb99.h" />
     <ClInclude Include="..\..\include\bee2\defs.h" />
     <ClInclude Include="..\..\include\bee2\info.h" />
     <ClInclude Include="..\..\include\bee2\math\ec.h" />
@@ -473,8 +486,8 @@
     <ClInclude Include="..\..\include\bee2\math\zm.h" />
     <ClInclude Include="..\..\include\bee2\math\zz.h" />
     <ClInclude Include="..\..\src\crypto\belt\belt_lcl.h" />
-    <ClInclude Include="..\..\src\crypto\bign_lcl.h" />
-    <ClInclude Include="..\..\src\math\zz\zz_int.h" />
+    <ClInclude Include="..\..\src\crypto\bign\bign_lcl.h" />
+    <ClInclude Include="..\..\src\math\zz\zz_lcl.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
