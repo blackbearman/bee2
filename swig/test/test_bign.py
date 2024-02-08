@@ -45,7 +45,7 @@ print(sbuf)
 err = bee2py.bignSign2(vp2op(sig), params, vp2op(der), c1, vp2op(hash1), vp2op(privkey), None, 0)
 print(err)
 sbuf = "0"*1000
-sbuf = bee2py.hexFrom(sbuf, sig, 64+32)
+sbuf = bee2py.hexFrom(sbuf, sig, 16*3)
 print(sbuf)
 err = bee2py.bignVerify(params, vp2op(der), c1, vp2op(hash1), vp2op(sig), vp2op(pubkey))
 print(err)
