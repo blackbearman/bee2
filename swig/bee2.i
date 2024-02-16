@@ -1,13 +1,17 @@
 %module bee2
-%include "cmalloc.i"
-%include "cstring.i"
 %include "carrays.i"
+%include "cdata.i"
 %include "cpointer.i"
-
+#ifdef SWIGPYTHON
+%include "cstring.i"
+#endif
+%include "typemaps.i"
 
 %{
-#include "bee2/core/hex.h"
+#include "bee2/core/safe.h"
 #include "bee2/core/mem.h"
+#include "bee2/core/hex.h"
+
 #include "bee2/crypto/belt.h"
 #include "bee2/crypto/bign.h"
 
@@ -24,22 +28,16 @@ typedef u32 err_t;
 %array_functions(size_t, sizeTarr)
 %pointer_cast(octet*, void*, op2vp)
 %pointer_cast(void*, octet*, vp2op)
+%pointer_cast(unsigned char*, void*, bp2vp)
+%pointer_cast(void*, unsigned char*, vp2bp)
 
 void* ptradd(void* ptr, int offset);
 
-/*!	\brief Кодирование буфера памяти
+%include "../include/bee2/core/safe.h"
+%include "../include/bee2/core/mem.h"
 
-	Буфер [count]src кодируется шестнадцатеричной строкой
-	{2 * count + 1}dest. Первому октету src соответствует первая пара 
-	символов dest, второму октету -- вторая пара и т.д.
-	\pre Буферы dest и src не пересекаются.
-*/
-%cstring_mutable(char* dest)
-void hexFrom(
-	char* dest,			/*!< [out] строка-приемник */
-	const void* src,	/*!< [in] память-источник */
-	size_t count		/*!< [in] число октетов */
-);
+%include "../include/bee2/crypto/belt.h"
+%include "../include/bee2/crypto/bign.h"
 
 /*!	\brief Декодирование буфера памяти
 
@@ -53,8 +51,30 @@ void hexTo(
 	const char* src		/*!< [in] строка-источник */
 );
 
-%include "../include/bee2/core/safe.h"
-%include "../include/bee2/core/mem.h"
+/*!	\brief Кодирование буфера памяти
 
-%include "../include/bee2/crypto/belt.h"
-%include "../include/bee2/crypto/bign.h"
+	Буфер [count]src кодируется шестнадцатеричной строкой
+	{2 * count + 1}dest. Первому октету src соответствует первая пара 
+	символов dest, второму октету -- вторая пара и т.д.
+	\pre Буферы dest и src не пересекаются.
+*/
+#ifdef SWIGPYTHON
+%cstring_mutable(char* dest)
+void hexFrom(
+	char* dest,			/*!< [out] строка-приемник */
+	const void* src,	/*!< [in] память-источник */
+	size_t count		/*!< [in] число октетов */
+);
+#else
+//%typemap(gotype) (char * ) "uintptr"
+%typemap(freearg) char * {  }
+%apply SWIGTYPE* { char *dest };
+void hexFrom(
+	char* dest,			/*!< [out] строка-приемник */
+	const void* src,	/*!< [in] память-источник */
+	size_t count		/*!< [in] число октетов */
+);
+#endif
+
+
+
