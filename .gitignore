@@ -68,3 +68,7 @@ clear.cmd
 build_*
 .vscode/
 .idea/
+.Rproj.user
+.R*
+bee2.*
+bee2_wrap.c

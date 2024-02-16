@@ -1,0 +1,2 @@
+PKG_CFLAGS=-I"/usr/local/include"
+PKG_LIBS="/usr/local/lib/libbee2_static.a"
