@@ -37,7 +37,12 @@ package bee2
 ```
 3. Install package to Go:
 ```
-go install ./bee2go
+go mod init by.bsu/bee2
+go build by.bsu/bee2
+go install by.bsu/bee2
 ```
 
 ## Test
+```
+go run ../test/test_bign.go
+```
