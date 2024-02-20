@@ -1,1 +1,3 @@
 exportPattern("^[[:alpha:]]+")
+importFrom("methods", "as", "callNextMethod", "is", "new", "setClass", "slot")
+useDynLib(bee2r, .registration = TRUE)

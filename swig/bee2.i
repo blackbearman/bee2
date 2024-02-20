@@ -25,7 +25,10 @@ typedef u32 err_t;
 #define ERR_OK	((err_t)0)
 
 %array_functions(u32, u32arr)
+%apply SWIGTYPE* { size_t* count };
+%apply SWIGTYPE* { size_t *ary };
 %array_functions(size_t, sizeTarr)
+
 %pointer_cast(octet*, void*, op2vp)
 %pointer_cast(void*, octet*, vp2op)
 %pointer_cast(unsigned char*, void*, bp2vp)
@@ -37,6 +40,7 @@ void* ptradd(void* ptr, int offset);
 %include "../include/bee2/core/mem.h"
 
 %include "../include/bee2/crypto/belt.h"
+
 %include "../include/bee2/crypto/bign.h"
 
 /*!	\brief Декодирование буфера памяти
@@ -66,7 +70,6 @@ void hexFrom(
 	size_t count		/*!< [in] число октетов */
 );
 #else
-//%typemap(gotype) (char * ) "uintptr"
 %typemap(freearg) char * {  }
 %apply SWIGTYPE* { char *dest };
 void hexFrom(
