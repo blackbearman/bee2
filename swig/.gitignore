@@ -1,3 +1,6 @@
 bee2_wrap.*
 bee2.*
+bee2r.R
 go.mod
+*.tar.gz
+
