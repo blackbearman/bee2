@@ -1,0 +1,4 @@
+module bee2 {
+    umbrella header "bee2swift.h"
+    link "/usr/local/lib/libbee2_static.a"
+}
