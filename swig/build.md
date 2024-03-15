@@ -66,3 +66,19 @@ devtools::install()
 Rscript test/test_bign.R 
 ```
 
+# Swift
+
+## Install
+
+Swift don't need a wrapper for C code from version 4.2. 
+Umbrella header and module.modulemap files should be in a separate directory.
+
+## Build
+```
+cd bee2swift
+swift build 
+```
+## Test
+```
+swift run 
+```
