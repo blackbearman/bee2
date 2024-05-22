@@ -4,6 +4,7 @@ if(MSVC)
 endif()
 
 add_executable(bee2cmd
+	bsum/bsum.c
 	core/cmd_arg.c
 	core/cmd_cvc.c
 	core/cmd_date.c
@@ -15,7 +16,7 @@ add_executable(bee2cmd
 	core/cmd_sig.c
 	core/cmd_term.c
 	core/whereami.c
-	bsum/bsum.c
+	csr/csr.c
 	cvc/cvc.c
 	cvr/cvr.c
 	es/es.c
@@ -26,7 +27,8 @@ add_executable(bee2cmd
 	cmd_main.c
 )
 
-if(WIN32)
+# CMake does not set MINGW in MSys2[MinGW] environment
+if(WIN32 OR MINGW OR ${CMAKE_C_PLATFORM_ID} STREQUAL MinGW)
   target_sources(bee2cmd
     PRIVATE stamp/stamp.c
   )

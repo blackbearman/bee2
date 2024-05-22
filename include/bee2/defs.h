@@ -4,7 +4,7 @@
 \brief Basic definitions
 \project bee2 [cryptographic library]
 \created 2012.04.01
-\version 2023.03.20
+\version 2024.01.24
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -72,7 +72,7 @@ T == octet.
 адресу out_len должно быть указано число элементов типа T, зарезервированных
 в буфере out. В результате выполнения функции число по адресу out_len 
 корректируется -- устанавливается равным актуальному числу элементов,
-записанных в массив out. Размера буфера может контролироваться предусловиями.
+записанных в массив out. Размер буфера может контролироваться предусловиями.
 О недостаточности размера функция может сообщать через коды возврата.
 
 При документировании описанной логики возврата массива используется
@@ -284,6 +284,11 @@ T == octet.
 			typedef unsigned long long u64;
 			typedef signed long long i64;
 			#define U64_SUPPORT
+			#if defined(__GNUC__) && defined(__SIZEOF_INT128__)
+				typedef __int128 i128;
+				typedef unsigned __int128 u128;
+				#define U128_SUPPORT
+			#endif
 		#else
 			#error "Unsupported int/long/long long configuration"
 		#endif
@@ -291,7 +296,7 @@ T == octet.
 		typedef unsigned long u64;
 		typedef signed long i64;
 		#define U64_SUPPORT
-		#if defined(__GNUC__) && (__WORDSIZE == 64)
+		#if defined(__GNUC__) && defined(__SIZEOF_INT128__)
 			typedef __int128 i128;
 			typedef unsigned __int128 u128;
 			#define U128_SUPPORT
@@ -347,38 +352,18 @@ T == octet.
 *******************************************************************************
 */
 
-#if defined(__WORDSIZE)
-	#if (__WORDSIZE == 16)
-		#define B_PER_W 16
-		typedef u16 word;
-		typedef u32 dword;
-	#elif (__WORDSIZE == 32)
-		#define B_PER_W 32
-		typedef u32 word;
-		typedef u64 dword;
-	#elif (__WORDSIZE == 64)
-		#define B_PER_W 64
-		typedef u64 word;
-		typedef u128 dword;
-	#else
-		#error "Unsupported word size"
-	#endif
+#if defined(U128_SUPPORT)
+	#define B_PER_W 64
+	typedef u64 word;
+	typedef u128 dword;
+#elif defined(U64_SUPPORT)
+	#define B_PER_W 32
+	typedef u32 word;
+	typedef u64 dword;
 #else
-	#if (UINT_MAX == 65535u)
-		#define B_PER_W 16
-		typedef u16 word;
-		typedef u32 dword;
-	#elif (UINT_MAX == 4294967295u)
-		#define B_PER_W 32
-		typedef u32 word;
-		typedef u64 dword;
-	#elif (UINT_MAX == 18446744073709551615u)
-		#define B_PER_W 64
-		typedef u64 word;
-		typedef u128 dword;
-	#else
-		#error "Unsupported word size"
-	#endif
+	#define B_PER_W 16
+	typedef u16 word;
+	typedef u32 dword;
 #endif
 
 #if (B_PER_W != 16 && B_PER_W != 32 && B_PER_W != 64)

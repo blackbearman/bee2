@@ -4,7 +4,7 @@
 \brief Tests for STB 34.101.79 (btok)
 \project bee2/test
 \created 2022.07.07
-\version 2023.03.29
+\version 2023.12.19
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -18,6 +18,7 @@
 #include <bee2/core/util.h>
 #include <bee2/crypto/belt.h>
 #include <bee2/crypto/bign.h>
+#include <bee2/crypto/bign96.h>
 #include <bee2/crypto/btok.h>
 
 /*
@@ -108,16 +109,20 @@ static bool_t btokCVCTest()
 	btok_cvc_t cvc0[1];
 	btok_cvc_t cvc1[1];
 	btok_cvc_t cvc2[1];
+	btok_cvc_t cvc3[1];
 	bign_params params[1];
 	octet privkey0[64];
 	octet privkey1[48];
 	octet privkey2[32];
+	octet privkey3[24];
 	octet cert0[400];
 	size_t cert0_len, cert0_len1;
 	octet cert1[400];
 	size_t cert1_len, cert1_len1;
 	octet cert2[400];
 	size_t cert2_len, cert2_len1;
+	octet cert3[400];
+	size_t cert3_len, cert3_len1;
 	// запустить ГПСЧ
 	prngEchoStart(echo, beltH(), 256);
 	// определить максимальную длину сертификата
@@ -131,8 +136,8 @@ static bool_t btokCVCTest()
 	cvc0->pubkey_len = 128;
 	if (btokCVCCheck(cvc0) == ERR_OK)
 		return FALSE;
-	if (bignStdParams(params, "1.2.112.0.2.0.34.101.45.3.3") != ERR_OK ||
-		bignGenKeypair(privkey0, cvc0->pubkey, params, prngEchoStepR,
+	if (bignParamsStd(params, "1.2.112.0.2.0.34.101.45.3.3") != ERR_OK ||
+		bignKeypairGen(privkey0, cvc0->pubkey, params, prngEchoStepR,
 			echo) != ERR_OK ||
 		btokCVCCheck(cvc0) != ERR_OK)
 		return FALSE;
@@ -171,8 +176,8 @@ static bool_t btokCVCTest()
 	memSet(cvc1->hat_eid, 0xDD, sizeof(cvc1->hat_eid));
 	memSet(cvc1->hat_esign, 0x33, sizeof(cvc1->hat_esign));
 	cvc1->pubkey_len = 96;
-	if (bignStdParams(params, "1.2.112.0.2.0.34.101.45.3.2") != ERR_OK ||
-		bignGenKeypair(privkey1, cvc1->pubkey, params, prngEchoStepR,
+	if (bignParamsStd(params, "1.2.112.0.2.0.34.101.45.3.2") != ERR_OK ||
+		bignKeypairGen(privkey1, cvc1->pubkey, params, prngEchoStepR,
 			echo) != ERR_OK ||
 		btokCVCCheck(cvc1) != ERR_OK)
 		return FALSE;
@@ -208,8 +213,8 @@ static bool_t btokCVCTest()
 	memSet(cvc2->hat_eid, 0x88, sizeof(cvc2->hat_eid));
 	memSet(cvc2->hat_esign, 0x11, sizeof(cvc2->hat_esign));
 	cvc2->pubkey_len = 64;
-	if (bignStdParams(params, "1.2.112.0.2.0.34.101.45.3.1") != ERR_OK ||
-		bignGenKeypair(privkey2, cvc2->pubkey, params, prngEchoStepR,
+	if (bignParamsStd(params, "1.2.112.0.2.0.34.101.45.3.1") != ERR_OK ||
+		bignKeypairGen(privkey2, cvc2->pubkey, params, prngEchoStepR,
 			echo) != ERR_OK ||
 		btokCVCCheck(cvc2) != ERR_OK)
 		return FALSE;
@@ -225,13 +230,35 @@ static bool_t btokCVCTest()
 			privkey1, 48) != ERR_OK ||
 		cert2_len1 != cert2_len)
 		return FALSE;
+	// составить cvc3
+	memSetZero(cvc3, sizeof(btok_cvc_t));
+	strCopy(cvc3->authority, "BYCA1000");
+	strCopy(cvc3->holder, "590082394655");
+	hexTo(cvc3->from, "020200070102");
+	hexTo(cvc3->until, "020901020301");
+	cvc3->pubkey_len = 48;
+	if (bign96ParamsStd(params, "1.2.112.0.2.0.34.101.45.3.0") != ERR_OK ||
+		bign96KeypairGen(privkey3, cvc3->pubkey, params, prngEchoStepR,
+			echo) != ERR_OK ||
+		btokCVCCheck(cvc3) != ERR_OK)
+		return FALSE;
+	// выпустить cert3
+	if (btokCVCIss(0, &cert3_len, cvc3, cert1, cert1_len,
+			privkey1, 48) != ERR_OK ||
+		cert3_len > sizeof(cert3) ||
+		btokCVCIss(cert3, &cert3_len1, cvc3, cert1, cert1_len,
+			privkey1, 48) != ERR_OK ||
+		cert3_len1 != cert3_len)
+		return FALSE;
 	// проверить сертификаты
 	if (btokCVCVal(cert1, cert1_len, cert0, cert0_len, 0) != ERR_OK ||
 		btokCVCVal(cert2, cert2_len, cert1, cert1_len, 0) != ERR_OK ||
 		btokCVCVal(cert2, cert2_len, cert1, cert1_len, cvc0->from) == ERR_OK ||
+		btokCVCVal(cert3, cert3_len, cert1, cert1_len, 0) != ERR_OK ||
 		btokCVCVal2(cvc1, cert1, cert1_len, cvc0, 0) != ERR_OK ||
 		btokCVCVal2(cvc2, cert2, cert2_len, cvc1, 0) != ERR_OK ||
-		btokCVCVal2(cvc2, cert2, cert2_len, cvc1, cvc0->until) == ERR_OK)
+		btokCVCVal2(cvc2, cert2, cert2_len, cvc1, cvc0->until) == ERR_OK ||
+		btokCVCVal2(cvc3, cert3, cert3_len, cvc1, 0) != ERR_OK)
 		return FALSE;
 	// все хорошо
 	return TRUE;
@@ -421,7 +448,7 @@ static err_t bakeTestCertVal(octet* pubkey, const bign_params* params,
 	return ERR_OK;
 }
 
-bool_t btokBAUTHTest() 
+static bool_t btokBAUTHTest() 
 {
 	bign_params params[1];
 	octet echoa[64];
@@ -440,7 +467,7 @@ bool_t btokBAUTHTest()
 	octet stateb[20000];
 	octet buf[1000];
 	// загрузить долговременные параметры
-	if (bignStdParams(params, "1.2.112.0.2.0.34.101.45.3.1") != ERR_OK)
+	if (bignParamsStd(params, "1.2.112.0.2.0.34.101.45.3.1") != ERR_OK)
 		return FALSE;
 	// подготовить память
 	if (sizeof(echoa) < prngEcho_keep() ||
@@ -523,6 +550,12 @@ bool_t btokBAUTHTest()
 	// все нормально
 	return TRUE;
 }
+
+/*
+*******************************************************************************
+Общий тест
+*******************************************************************************
+*/
 
 bool_t btokTest()
 {

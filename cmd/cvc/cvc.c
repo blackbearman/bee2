@@ -4,7 +4,7 @@
 \brief Manage CV-certificates
 \project bee2/cmd 
 \created 2022.07.12
-\version 2023.06.16
+\version 2024.01.19
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -100,7 +100,7 @@ static int cvcUsage()
 		"    -until <YYMMDD> -- expiration date   root req [iss] cut\n"
 		"    -eid <10*hex> -- eId access mask     [root] [req] [iss]\n"
 		"    -esign <4*hex> -- eSign access mask  [root] [req] [iss]\n"
-		"    -pass <scheme> -- password           root req iss shorten match\n"
+		"    -pass <schema> -- password           root req iss shorten match\n"
 		"    -date <YYMMDD> -- validation date    [val]\n"
 		"  field:\n"
 		"    {-authority|-holder|-from|-until|-eid|-esign|-pubkey|-sig}\n"
@@ -133,8 +133,8 @@ static err_t cvcSelfTest()
 		"34281FED0732429E0C79235FC273E269");
 	ASSERT(sizeof(stack) >= prngEcho_keep());
 	prngEchoStart(stack, privkey, 32);
-	if (bignStdParams(params, "1.2.112.0.2.0.34.101.45.3.1") != ERR_OK ||
-		bignGenKeypair(privkey, pubkey, params, prngEchoStepR,
+	if (bignParamsStd(params, "1.2.112.0.2.0.34.101.45.3.1") != ERR_OK ||
+		bignKeypairGen(privkey, pubkey, params, prngEchoStepR,
 			stack) != ERR_OK ||
 		!hexEq(pubkey,
 		"BD1A5650179D79E03FCEE49D4C2BD5DD"
@@ -143,7 +143,7 @@ static err_t cvcSelfTest()
 		"190C2EDA5909054A9AB84D2AB9D99A90"))
 		return ERR_SELFTEST;
 	// bign-valpubkey
-	if (bignValPubkey(params, pubkey) != ERR_OK)
+	if (bignPubkeyVal(params, pubkey) != ERR_OK)
 		return ERR_SELFTEST;
 	// bign-sign
 	if (beltHash(hash, beltH(), 13) != ERR_OK)
@@ -392,8 +392,8 @@ static err_t cvcParseOptions(btok_cvc_t* cvc, bool_t* eid, bool_t* esign,
 		}
 	}
 	// проверить, что запрошенные данные определены
-	// \\remark корректность cvc будет проверена позже
-	// \\remark параметр date не является обязательным
+	// \remark корректность cvc будет проверена позже
+	// \remark параметр date не является обязательным
 	if (code == ERR_OK && pwd && !*pwd)
 		code = ERR_CMD_PARAMS;
 	// завершить
@@ -662,7 +662,6 @@ static err_t cvcIss(int argc, char* argv[])
 	// выпустить сертификат
 	code = btokCVCIss(cert, &cert_len, cvc, certa, certa_len, privkeya,
 		privkeya_len);
-	ASSERT(cert_len <= req_len + 96 - 48);
 	cmdBlobClose(privkeya);
 	ERR_CALL_HANDLE(code, cmdBlobClose(stack));
 	// записать сертификат
