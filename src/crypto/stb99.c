@@ -4,7 +4,7 @@
 \brief STB 1176.2-99: generation of parameters
 \project bee2 [cryptographic library]
 \created 2023.08.01
-\version 2023.10.04
+\version 2024.02.29
 \copyright The Bee2 authors
 \license Licensed under the Apache License, Version 2.0 (see LICENSE.txt).
 *******************************************************************************
@@ -26,7 +26,7 @@
 *******************************************************************************
 При генерации параметров stb99 требуется находить простые числа, битовая длина 
 которых лежит в интервале (16, 32]. Для этого используется функция 
-priNextPrimeVal(), которая находит гарантированно простое число из одного 
+priNextPrimeW(), которая находит гарантированно простое число из одного 
 машинного слова. Функция не подходит, если длина машинного слова равняется 16.
 
 \todo Поддержать B_PER_W == 16.
@@ -482,16 +482,20 @@ static err_t stb99DiVal(const stb99_seed* seed, size_t r)
 {
 	size_t i;
 	// проверить di[0]
-	if (seed->l > 2 * seed->di[0] ||
-		seed->di[0] >= SIZE_MAX / 8 ||
-		8 * seed->di[0] + r > 7 * seed->l)
+	ASSERT(7 * seed->l > r);
+	if (seed->di[0] >= SIZE_MAX / 8 ||
+		seed->l > 2 * seed->di[0] ||
+		8 * seed->di[0] > 7 * seed->l - r)
 		return ERR_BAD_SEED;
+	ASSERT(seed->di[0] > 16);
 	// проверить цепочку di
-	for (i = 1; seed->di[i] > 16; ++i)
-		if (seed->di[i - 1] > 2 * seed->di[i] ||
-			seed->di[i] >= SIZE_MAX / 5 ||
-			5 * seed->di[i] + 16 >= 4 * seed->di[i - 1])
+	for (i = 1; i < COUNT_OF(seed->di) && seed->di[i] > 16; ++i)
+		if (seed->di[i] >= SIZE_MAX / 5 ||
+			seed->di[i - 1] > 2 * seed->di[i] ||
+			5 * seed->di[i] >= 4 * seed->di[i - 1] - 16)
 			return ERR_BAD_SEED;
+	if (seed->di[i - 1] > 32)
+		return ERR_BAD_SEED;
 	for (; i < COUNT_OF(seed->di); ++i)
 		if (seed->di[i] != 0)
 			return ERR_BAD_SEED;
@@ -505,12 +509,15 @@ static err_t stb99RiVal(const stb99_seed* seed, size_t r)
 	// проверить ri[0]
 	if (seed->ri[0] != r)
 		return ERR_BAD_SEED;
+	ASSERT(seed->ri[0] > 16);
 	// проверить цепочку ri
-	for (i = 1; seed->ri[i] > 16; ++i)
-		if (seed->ri[i - 1] > 2 * seed->ri[i] ||
-			seed->ri[i] >= SIZE_MAX / 5 ||
-			5 * seed->ri[i] + 16 >= 4 * seed->ri[i - 1])
+	for (i = 1; i < COUNT_OF(seed->ri) && seed->ri[i] > 16; ++i)
+		if (seed->ri[i] >= SIZE_MAX / 5 ||
+			seed->ri[i - 1] > 2 * seed->ri[i] ||
+			5 * seed->ri[i] >= 4 * seed->ri[i - 1] - 16)
 			return ERR_BAD_SEED;
+	if (seed->ri[i - 1] > 32)
+		return ERR_BAD_SEED;
 	for (; i < COUNT_OF(seed->ri); ++i)
 		if (seed->ri[i] != 0)
 			return ERR_BAD_SEED;
@@ -798,7 +805,7 @@ err_t stb99ParamsGen(stb99_params* params, const stb99_seed* seed)
 	// сгенерировать a
 	while (1)
 	{
-		// a <- d^((p - 1)/2)
+		// a <- d^((p - 1)/q)
 		qrPower(a, d, p, n - m + 1, qr, stack);
 		// a != e?
 		if (!qrIsUnity(a, qr))
