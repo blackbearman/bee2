@@ -25,7 +25,7 @@ docker buildx use mybuilder
 
 Next times:
 ```
-docker run --privileged --rm tonistiigi/binfmt --install all 
+docker run --privileged --rm tonistiigi/binfmt:master --install all 
 ``` 
 
 ## Update Docker images
