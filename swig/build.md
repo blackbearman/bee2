@@ -82,3 +82,30 @@ swift build
 ```
 swift run 
 ```
+
+
+# C#
+
+## Install
+
+1. Compile SWIP interface:
+```
+swig -csharp -o bee2net/bee2_wrap.c -outdir bee2net -outfile bee2cs.cs -dllimport bee2wrap bee2.i
+```
+2. Compile and build wrapper library:
+```
+gcc bee2net/bee2_wrap.c --shared -lbee2_static -o bee2net/runtimes/linux-x64/native/bee2wrap.so
+```
+3. Compile C# project:
+```
+cd bee2net
+dotnet new classlib --force
+dotnet build
+```
+
+## Test
+```
+cd test/test_csharp
+dotnet build
+dotnet run
+```

@@ -33,6 +33,7 @@ typedef u32 err_t;
 %pointer_cast(void*, octet*, vp2op)
 %pointer_cast(unsigned char*, void*, bp2vp)
 %pointer_cast(void*, unsigned char*, vp2bp)
+%pointer_cast(void*, char*, vp2cp)
 
 void* ptradd(void* ptr, int offset);
 
@@ -77,6 +78,15 @@ void hexFrom(
 	const void* src,	/*!< [in] память-источник */
 	size_t count		/*!< [in] число октетов */
 );
+#endif
+#ifdef SWIGCSHARP
+%{
+char* getStr(void *dest) {
+	return dest;
+}
+%}
+%apply SWIGTYPE* { char* };
+char* getStr(void *dest);
 #endif
 
 

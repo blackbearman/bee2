@@ -3,4 +3,8 @@ bee2.*
 bee2r.R
 go.mod
 *.tar.gz
+*cs.cs
+Class1.cs
+bin/
+obj/
 
