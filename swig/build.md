@@ -90,7 +90,7 @@ swift run
 
 1. Compile SWIP interface:
 ```
-swig -csharp -o bee2net/bee2_wrap.c -outdir bee2net -outfile bee2cs.cs -dllimport bee2wrap bee2.i
+swig -csharp -o bee2net/bee2_wrap.c -outdir bee2net -outfile bee2cs.cs -dllimport bee2wrap -namespace bcrypto bee2.i
 ```
 2. Compile and build wrapper library:
 ```
