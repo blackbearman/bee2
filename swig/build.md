@@ -2,7 +2,7 @@
 
 ## Install
 
-1. Compile SWIP interface:
+1. Compile SWIG interface:
 ```
 swig -python -cpperraswarn -o bee2py/bee2_wrap.c -outdir bee2py bee2.i 
 ```
@@ -21,7 +21,7 @@ python3 test/test_bign.py
 
 ## Install
 
-1. Compile SWIP interface:
+1. Compile SWIG interface:
 ```
 swig -go -cgo -intgosize 64 -cpperraswarn -o bee2go/bee2_wrap.c -outdir bee2go bee2.i 
 ```
@@ -51,7 +51,7 @@ go run ../test/test_bign.go
 
 ## Install
 
-1. Compile SWIP interface:
+1. Compile SWIG interface:
 ```
 swig -r -cpperraswarn -module bee2r -o bee2r/src/bee2_wrap.c -outdir bee2r/R bee2.i 
 ```
@@ -88,18 +88,26 @@ swift run
 
 ## Install
 
-1. Compile SWIP interface:
+1. Compile SWIG interface:
 ```
 swig -csharp -o bee2net/bee2_wrap.c -outdir bee2net -outfile bee2cs.cs -dllimport bee2wrap -namespace bcrypto bee2.i
 ```
 2. Compile and build wrapper library:
 ```
+mkdir -p bee2net/runtimes/linux-x64/native
 gcc bee2net/bee2_wrap.c --shared -lbee2_static -o bee2net/runtimes/linux-x64/native/bee2wrap.so
 ```
 3. Compile C# project:
 ```
 cd bee2net
-dotnet new classlib --force
+[dotnet new classlib --force
+sed -i 's|</Project>|\
+  <ItemGroup>\
+    <Content Include=\"runtimes\\**\">\
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>\
+    </Content>\
+  </ItemGroup>\
+</Project>|g' bee2net.csproj]
 dotnet build
 ```
 
